@@ -78,6 +78,8 @@ class Net:
 
     def result(self):
         """Indicates current result of the network - output"""
+        i, j = self.last_active()
+        print(self.net[i][j].value)
 
 
 

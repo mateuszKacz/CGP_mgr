@@ -18,6 +18,7 @@ def main():
     net.activate(3, 1)
     net.setup()
     net.show_net()
-    net.last_active()
+    net.result()
+
 
 main()

@@ -14,3 +14,4 @@ class Parameters:
         self.hidden_layers_width = 4
         self.hidden_layers_height = 5
         self.objective_function = 'SUM'
+        self.n_links = 4

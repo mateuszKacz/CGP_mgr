@@ -14,11 +14,9 @@ def main():
     params = Parameters()
 
     net = Net(params)
-    net.activate(1, 1)
-    net.activate(3, 1)
     net.setup()
     net.show_net()
     net.result()
-
+    net.show_links(2,1)
 
 main()

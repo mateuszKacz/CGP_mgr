@@ -5,7 +5,6 @@
 ###################################################
 
 import random as rnd
-import numpy as np
 
 
 class Gate:
@@ -14,15 +13,26 @@ class Gate:
 
     # gate_operations = ['AND', 'OR', 'none']
     # gate_types = in, layer, out or none
-    def __init__(self, g_type='layer', operation_type='AND'):
+    def __init__(self, params, i, j, g_type='layer', operation_type='AND'):
 
         self.active = False
         self.g_type = g_type
+        self.params = params
         self.operation_type = operation_type
         self.value = 0
+        self.coord = (i, j)
+
+        # input values
+        self.active_input = (0, 0)
 
         # list of "coordinates" of gates to connect as touples
-        self.connect = []
+        self.links = []
+
+        # randomly selects initial possible links
+        for i in range(self.params.n_links):
+            if self.coord[1] < (self.params.hidden_layers_width-1):
+                self.links.append((rnd.randint(self.coord[1]+1, self.params.hidden_layers_width),
+                                   rnd.randint(0, self.params.hidden_layers_height-1)))
 
     def print_type(self):
 
@@ -36,7 +46,12 @@ class Gate:
 
         self.active = False
 
-   # def operation(self):
+    def operation(self):
+        """Defines gate operations like 'AND' 'OR' etc. """
+        if self.operation_type == 'AND':
+            self.value = sum(self.active_input)
+        elif self.operation_type == 'OR':
+            self.value = abs(self.active_input[0]-self.active_input[1])
 
 
 class Net:
@@ -47,8 +62,8 @@ class Net:
 
         self.params = params
         self.operation_types_dict = {0: 'AND', 1: 'OR', 2: 'AND', 3: 'OR', 4: 'AND', 5: 'OR'}
-        self.net = [[Gate(operation_type=self.operation_types_dict[x]) for x in range(self.params.hidden_layers_height)]
-                    for y in range(self.params.hidden_layers_width)]
+        self.net = [[Gate(self.params, i, j, operation_type=self.operation_types_dict[i]) for i in range(self.params.hidden_layers_height)]
+                    for j in range(self.params.hidden_layers_width)]
 
     def last_active(self):
         """Searches for active gate from the last possible layer"""
@@ -76,11 +91,19 @@ class Net:
         for j in range(self.params.hidden_layers_height):
             self.net[0][j].value = self.params.input[j]
 
+        for i in range(self.params.hidden_layers_width):
+            for j in range(self.params.hidden_layers_height):
+
+                if rnd.random() <= 0.3:
+                    self.net[i][j].set_active()
+
     def result(self):
         """Indicates current result of the network - output"""
         i, j = self.last_active()
         print(self.net[i][j].value)
 
-
+    def show_links(self, i, j):
+        """Prints current possible connection of chosen Gate"""
+        print(self.net[i][j].links)
 
 

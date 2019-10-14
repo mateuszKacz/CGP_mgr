@@ -5,7 +5,7 @@
 ###################################################
 
 from parameters import Parameters
-from net import Net
+from net import Net2D
 
 
 def main():
@@ -13,10 +13,10 @@ def main():
 
     params = Parameters()
 
-    net = Net(params)
+    net = Net2D(params)
     net.setup()
     net.show_net()
     net.result()
-    net.show_links(2,1)
+    net.show_links(2, 1)
 
 main()

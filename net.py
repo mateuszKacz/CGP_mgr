@@ -1,7 +1,7 @@
 ###################################################
 #####    Class contains main class Gate       #####
-#####     it is a core item of the core       #####
-#####       item of the simulation            #####
+#####     it is a core item                   #####
+#####           of the simulation             #####
 ###################################################
 
 import random as rnd
@@ -54,7 +54,7 @@ class Gate:
             self.value = abs(self.active_input[0]-self.active_input[1])
 
 
-class Net:
+class Net2D:
 
     """Contains a net of Gates and main operation functions"""
 
@@ -105,5 +105,3 @@ class Net:
     def show_links(self, i, j):
         """Prints current possible connection of chosen Gate"""
         print(self.net[i][j].links)
-
-

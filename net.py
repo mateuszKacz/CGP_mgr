@@ -56,7 +56,7 @@ class Gate:
 
 class Net2D:
 
-    """Contains a net of Gates and main operation functions"""
+    """Creates a grid of connected Gates with main operation functions"""
 
     def __init__(self, params):
 
@@ -105,3 +105,12 @@ class Net2D:
     def show_links(self, i, j):
         """Prints current possible connection of chosen Gate"""
         print(self.net[i][j].links)
+
+
+class Net1D:
+    """Creates a 1D net of gates"""
+
+    def __init__(self, params, operations_types):
+
+        self.params = params
+        self.operations_types = operations_types

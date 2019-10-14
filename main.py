@@ -5,7 +5,7 @@
 ###################################################
 
 from parameters import Parameters
-from net import Net2D
+from net import Net2D, Net1D
 
 
 def main():
@@ -13,10 +13,8 @@ def main():
 
     params = Parameters()
 
-    net = Net2D(params)
-    net.setup()
-    net.show_net()
-    net.result()
-    net.show_links(2, 1)
+    net = Net1D(params, operations_types = ['AND', 'OR'])
+
+
 
 main()

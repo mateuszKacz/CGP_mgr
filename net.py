@@ -7,7 +7,7 @@
 import random as rnd
 
 
-class Gate:
+class Gate2D:
     """Contains a scheme of the logical gate. It is suited for every logical operation
     and it depend on the gate_type"""
 
@@ -62,7 +62,7 @@ class Net2D:
 
         self.params = params
         self.operation_types_dict = {0: 'AND', 1: 'OR', 2: 'AND', 3: 'OR', 4: 'AND', 5: 'OR'}
-        self.net = [[Gate(self.params, i, j, operation_type=self.operation_types_dict[i]) for i in range(self.params.hidden_layers_height)]
+        self.net = [[Gate2D(self.params, i, j, operation_type=self.operation_types_dict[i]) for i in range(self.params.hidden_layers_height)]
                     for j in range(self.params.hidden_layers_width)]
 
     def last_active(self):
@@ -107,10 +107,46 @@ class Net2D:
         print(self.net[i][j].links)
 
 
+class Gate1D:
+    """Creates 1D Gate with functions"""
+
+    def __init__(self, params, operation_type, index):
+
+        self.active = False
+        self.params = params
+        self.operation_type = operation_type
+        self.output_val = 0
+        self.index = index
+
+        # input values
+        self.active_input = (0, 0)
+
+    def print_type(self):
+
+        print(self.operation_type)
+
+    def set_activate(self):
+
+        self.active = True
+
+    def set_deactivate(self):
+
+        self.active = False
+
+    def operation(self):
+        """Defines gate operations like 'AND' 'OR' etc. """
+        if self.operation_type == 'AND':
+            self.output_val = sum(self.active_input)
+        elif self.operation_type == 'OR':
+            self.output_val = abs(self.active_input[0]-self.active_input[1])
+
+
 class Net1D:
     """Creates a 1D net of gates"""
 
-    def __init__(self, params, operations_types):
+    def __init__(self, params):
 
         self.params = params
-        self.operations_types = operations_types
+
+        self.net = [Gate1D(self.params, rnd.choice(self.params.operations), i) for i in range(self.params.size_1d)]
+

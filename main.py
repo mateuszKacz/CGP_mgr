@@ -15,6 +15,7 @@ def main():
                         pdb_gate_operations_change=0.2)
 
     net = Net1D(params)
-
+    net.show_net()
+    net.show_output()
 
 main()

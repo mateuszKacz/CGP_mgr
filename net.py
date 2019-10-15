@@ -11,8 +11,6 @@ class Gate2D:
     """Contains a scheme of the logical gate. It is suited for every logical operation
     and it depend on the gate_type"""
 
-    # gate_operations = ['AND', 'OR', 'none']
-    # gate_types = in, layer, out or none
     def __init__(self, params, i, j, g_type='layer', operation_type='AND'):
 
         self.active = False
@@ -110,12 +108,12 @@ class Net2D:
 class Gate1D:
     """Creates 1D Gate with functions"""
 
-    def __init__(self, params, operation_type, index):
+    def __init__(self, params, operation_type, index, value=0):
 
         self.active = False
         self.params = params
         self.operation_type = operation_type
-        self.output_val = 0
+        self.output_val = value
         self.index = index
 
         # input values
@@ -147,6 +145,20 @@ class Net1D:
     def __init__(self, params):
 
         self.params = params
+        self.net = [Gate1D(self.params, 'input', i, value=self.params.inputs[i]) for i in range(len(self.params.inputs))]
+        self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.operations), 5+i) for i in
+                               range(self.params.size_1d)]
 
-        self.net = [Gate1D(self.params, rnd.choice(self.params.operations), i) for i in range(self.params.size_1d)]
+    def show_net(self):
 
+        for gate in self.net:
+            print(str(gate.index) + '\t' + str(gate.output_val))
+
+    def show_output(self):
+
+        self.net[10].set_activate()
+
+        for gate in reversed(self.net):
+            if gate.active:
+                return gate.output_val, gate.index
+        print('no active gate :(')

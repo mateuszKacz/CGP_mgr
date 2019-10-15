@@ -16,6 +16,7 @@ def main():
 
     net = Net1D(params)
     net.show_net()
-    net.show_output()
+    print(net.show_output())
+
 
 main()

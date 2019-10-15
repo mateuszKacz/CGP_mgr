@@ -150,15 +150,21 @@ class Net1D:
                                range(self.params.size_1d)]
 
     def show_net(self):
-
+        """Prints net indexes with values"""
         for gate in self.net:
             print(str(gate.index) + '\t' + str(gate.output_val))
 
     def show_output(self):
-
-        self.net[10].set_activate()
+        """Prints output value of last active gate"""
 
         for gate in reversed(self.net):
             if gate.active:
-                return gate.output_val, gate.index
-        print('no active gate :(')
+                print(gate.output_val)
+
+    def output(self):
+        """Returns output value of last active gate"""
+
+        for gate in reversed(self.net):
+            if gate.active:
+                return gate.output_val
+

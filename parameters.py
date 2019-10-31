@@ -4,6 +4,7 @@
 #####                                         #####
 ###################################################
 
+
 class Parameters:
     """Class contains main initial values and parameters of the simulation"""
 
@@ -14,10 +15,13 @@ class Parameters:
         self.output = output
         self.num_gates_active = num_gates_active
         self.pdb_link_change = pdb_link_change
-        self.pdb_gate_operation_change = pdb_gate_operations_change
+        self.pdb_gate_operations_change = pdb_gate_operations_change
         self.operations = operations
         # 2D Net params
         self.hidden_layers_width = 4
         self.hidden_layers_height = 5
-        # aD Net Params
+        # 1D Net Params
         self.size_1d = size_1d
+        self.inputs_size = len(self.inputs)
+        self.total_size = self.size_1d + self.inputs_size
+

@@ -8,12 +8,12 @@
 class Parameters:
     """Class contains main initial values and parameters of the simulation"""
 
-    def __init__(self, operations, size_1d, inputs, output, num_gates_active, pdb_link_change=0.35,
+    def __init__(self, operations, size_1d, inputs, output, num_copies, pdb_link_change=0.35,
                  pdb_gate_operations_change=0.2):
 
         self.inputs = inputs
         self.output = output
-        self.num_gates_active = num_gates_active
+        self.num_copies = num_copies
         self.pdb_link_change = pdb_link_change
         self.pdb_gate_operations_change = pdb_gate_operations_change
         self.operations = operations

@@ -4,7 +4,7 @@
 #####           of the simulation             #####
 ###################################################
 import time as t
-import random as rnd
+
 
 
 def init(net, ngates):
@@ -17,19 +17,13 @@ def init(net, ngates):
 
 def simulate(net):
 
-    for i in range(1000):
+    for i in range(100):
+
 
         t.sleep(0.1)
 
-        if net.params.pdb_gate_operations_change >= rnd.uniform(0, 1.):
-
-            net.change_operation(net.rnd_gate())
-
-        if net.params.pdb_link_change >= rnd.uniform(0, 1.):
-
-            net.change_input(net.rnd_gate(), rnd.randint(0, 1))
+        net.mutate()
 
         net.show_output()
-
 
 

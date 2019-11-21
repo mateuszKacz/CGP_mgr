@@ -35,18 +35,13 @@ class Gate1D:
 
     def operation(self):
         """Defines gate operations like 'AND' 'OR' etc. """
-        if self.operation_type == 'AND':
+        if self.operation_type == '+':
 
-            if self.active_input[0] and self.active_input[1]:
-                self.output_val = 1
-            else:
-                self.output_val = 0
+            self.output_val = sum(self.active_input)
 
-        elif self.operation_type == 'OR':
-            if self.active_input[0] == 0 and self.active_input[1] == 0:
-                self.output_val = 0
-            else:
-                self.output_val = 1
+        elif self.operation_type == '-':
+
+            self.output_val = self.active_input[0] - self.active_input[1]
 
 
 class Net1D:
@@ -63,7 +58,7 @@ class Net1D:
         for gate_index in range(self.params.inputs_size, len(self.net)):
 
             for gate_input in range(2):
-                self.change_input(gate_index, gate_input)
+                self.change_input(gate_index, gate_input, self.net)
 
     def show_net(self):
         """Prints net indexes with values"""
@@ -94,12 +89,66 @@ class Net1D:
         return random_gate.gate_index
 
     # random choices for gates
-    def change_operation(self, gate_index):
+    def change_operation(self, gate_index, net):
 
-        self.net[gate_index].operation_type = rnd.choice(self.params.operations)
-        print('operation changed to: ' + self.net[gate_index].operation_type)
+        net[gate_index].operation_type = rnd.choice(self.params.operations)
 
-    def change_input(self, gate_index, input_index):
+    def change_input(self, gate_index, input_index, net):
 
-        self.net[gate_index].active_input[input_index] = self.net[rnd.randint(0, max(1, gate_index-1))].output_val
-        self.net[gate_index].operation()
+        net[gate_index].active_input[input_index] = net[rnd.randint(0, max(1, gate_index-1))].output_val
+        net[gate_index].operation()
+
+    def evaluate(self, net_copy):
+        """Evaluates a copy of the Net given the choosen function"""
+
+        diff = abs(net_copy[-1].output_val - sum(self.params.output))
+
+        return diff
+
+    def copy(self, n=4):
+        """Creates n copies of net for mutation"""
+
+        net_copies = []
+
+        for i in range(n):
+
+            net_copies.append(self.net)
+
+        return net_copies
+
+    def choose_mutation(self, net_copies):
+        """Chooses the best mutation of the Net from the copies provided"""
+
+        best = []
+        old_eval_index = 1000
+
+        for copy in net_copies:
+
+            new_eval_index = self.evaluate(copy)
+
+            if new_eval_index < 1000:
+
+                best = copy
+                old_eval_index = new_eval_index
+
+        return best
+
+    def mutate(self):
+        """Mutate n copies of the Net"""
+
+        net_copies = self.copy()
+
+        for copy in net_copies:
+            if self.params.pdb_gate_operations_change >= rnd.uniform(0,1):
+
+                self.change_operation(self.rnd_gate(), copy)
+
+            if self.params.pdb_link_change >= rnd.uniform(0,1):
+                self.change_input(self.rnd_gate(), rnd.randint(0, 1), copy)
+
+        self.net = self.choose_mutation(net_copies)
+
+    def net_count(self):
+        """Counts every gates outputs"""
+
+

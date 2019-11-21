@@ -12,7 +12,7 @@ from gui import GUI
 def main():
     """Main function"""
 
-    params = Parameters(['AND', 'OR'], 15, [1, 0, 1, 0, 1], [1], 5, pdb_link_change=0.9,
+    params = Parameters(['-', '+'], 15, [1, 0, 1, 0, 1], [1], 4, pdb_link_change=0.9,
                         pdb_gate_operations_change=0.7)
 
     root = tk.Tk()

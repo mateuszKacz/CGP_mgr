@@ -23,7 +23,7 @@ def main():
     data_sum = [sum(data[i]) for i in range(len(data))]
 
     params = Parameters(_operations=['+', '-'], _size_1d=15, _inputs=data, _output=data_sum, _num_copies=4,
-                        _pdb_link_change=0.35, _pdb_gate_operation_change=0.3, _pdb_output_change=0.3)
+                        _pdb_link_change=0.35, _pdb_gate_operation_change=0.3, _pdb_output_change=0.3, _k_const=0.1)
 
     simulation = Simulation(params)
 

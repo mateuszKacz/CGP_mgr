@@ -3,9 +3,11 @@
 # ------------------------------------ #
 
 from copy import deepcopy
-from math import exp
+from math import exp, log
 from random import random
 from net_1d import Net1D
+from statistics import mode
+from pandas import DataFrame
 
 
 class Simulation:
@@ -36,11 +38,11 @@ class Simulation:
         :return pdb(0,1)
         """
 
-        return exp(- self.params.k_const * abs(new_net_potential-net_potential)/self.params.temp)
+        return exp(- self.params.k_const * (abs(new_net_potential-net_potential))/self.params.temp)
 
     def simulate(self, _sim_continue):
         """Method runs net mutation on all Gates"""
-
+        acc_pdb_data = []
         i = 0
         while _sim_continue:
 
@@ -58,7 +60,7 @@ class Simulation:
                 self.net = deepcopy(copies[best_copy_index])
             else:
                 acc_pdb = self.calc_acceptance_probability(copies[best_copy_index].potential, self.net.potential)
-
+                acc_pdb_data.append(acc_pdb)
                 if random() <= acc_pdb:
                     self.net = copies[best_copy_index]
 
@@ -76,12 +78,15 @@ class Simulation:
                 print(self.params.output)
                 print(self.net.potential)
 
-            # if self.net.potential < 0.1:
-            #     _sim_continue = False
-            #     self.net.show_whole_net()
-            #     self.net.show_output()
-            #     print(self.params.output)
-            #     print(self.net.potential)
-            #     print(i)
+                data = DataFrame(acc_pdb_data)
+                data.to_csv('data.txt')
+
+            if self.net.potential < 0.1:
+                _sim_continue = False
+                self.net.show_whole_net()
+                self.net.show_output()
+                print(self.params.output)
+                print(self.net.potential)
+                print(i)
 
 

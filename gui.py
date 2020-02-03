@@ -31,15 +31,7 @@ class GUI(tk.Frame):
         print("Start")
         self.sim_continue = True
         self.simulation.net.show_net()
-
-        i = 0
-        while self.sim_continue:
-            i += 1
-            self.simulation.simulate()
-
-            if i % 2000 == 0:
-                print(f'Iter: {i}')
-                self.simulation.net.show_output()
+        self.simulation.simulate(self.sim_continue)
 
 
 

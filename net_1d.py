@@ -76,13 +76,14 @@ class Net1D:
         self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.operations), self.params.input_length + i) for i in
                                range(self.params.size_1d)]
 
-        # initiate gates' links
-        self.init_gates_links()
-        self.calculate_all_outputs() # sets initial output_val in the gates
-
         # Net Output
         self.output_gate_index = self.rnd_gate(self.params.total_size)
         self.output = self.net[self.output_gate_index].output_val
+        self.potential = self.calculate_total_potential()
+
+        # initiate gates' links
+        self.init_gates_links()
+        self.calculate_all_outputs()  # sets initial output_val in the gates
 
     # Init methods
     def init_gates_links(self):
@@ -106,6 +107,12 @@ class Net1D:
 
         print(f'Output gate: {self.output_gate_index}  Output value: {self.output}')
 
+    def show_whole_net(self):
+        """Prints all Gates indexes, operations and links"""
+
+        for gate in self.net:
+            print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: ' + str(gate.active_input_index) + '   \t' + str(gate.operation_type))
+
     # Random methods
     def rnd_gate(self, stop, start=0):
         """Chooses random gate from the Net.
@@ -117,7 +124,7 @@ class Net1D:
         :return random gate index in range(start, stop) of type int
         """
 
-        return rnd.randint(start, stop)
+        return rnd.randint(start, stop - 1)
 
     def rnd_output_gate(self):
         """Chooses random gate from the net"""
@@ -147,8 +154,6 @@ class Net1D:
 
         :param gate_index: index of the gate in the net to update value in
         :type gate_index: int
-        :param link_index: index of value to be updated (default 0 or 1)
-        :type link_index: int
         """
         self.net[gate_index].active_input_value[0] = self.net[self.net[gate_index].active_input_index[0]].output_val
         self.net[gate_index].active_input_value[1] = self.net[self.net[gate_index].active_input_index[1]].output_val
@@ -162,7 +167,7 @@ class Net1D:
 
         self.calculate_all_outputs()
 
-        return pow(self.params.output[i] - self.output, 2)
+        return pow((self.params.output[i] - self.output), 2)
 
     def calculate_all_outputs(self):
         """Method recalculates all values in gates - all net"""
@@ -189,5 +194,6 @@ class Net1D:
         for i in range(len(self.params.inputs)):
             diff_list.append(self.run_data(self.params.inputs[i], i))
 
-        return sqrt(sum(diff_list))
+        self.potential = sqrt(sum(diff_list))
 
+        return self.potential

@@ -3,10 +3,9 @@
 # ------------------------------------ #
 
 from copy import deepcopy
-from math import exp, log
+from math import exp
 from random import random
 from net_1d import Net1D
-from statistics import mode
 from pandas import DataFrame
 
 
@@ -54,6 +53,7 @@ class Simulation:
                 copy.mutate()  # makes mutation of the copy
                 potentials.append(copy.calculate_total_potential())
 
+            # choose best copy
             best_copy_index = potentials.index(min(potentials))
 
             if copies[best_copy_index].potential < self.net.potential:
@@ -67,14 +67,21 @@ class Simulation:
             # controls
             if i % 100 == 0:
                 print(i)
-                print(self.net.potential)
-                self.params.temp -= 1
+                print(f'{self.net.potential} \t {self.params.temp}')
+                if self.params.temp > 15:
+
+                    self.params.temp -= 1
+                else:
+                    self.params.temp -= 0.1
+
 
             # end simulation
-            if i % 10000 == 0:
+            if i % 100000 == 0:
                 _sim_continue = False
                 self.net.show_whole_net()
+                self.net.calculate_all_outputs()
                 self.net.show_output()
+                print(self.net.output)
                 print(self.params.output)
                 print(self.net.potential)
 
@@ -84,7 +91,9 @@ class Simulation:
             if self.net.potential < 0.1:
                 _sim_continue = False
                 self.net.show_whole_net()
+                self.net.calculate_all_outputs()
                 self.net.show_output()
+                print(self.net.output)
                 print(self.params.output)
                 print(self.net.potential)
                 print(i)

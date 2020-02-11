@@ -60,6 +60,14 @@ class Gate1D:
 
             self.output_val = self.active_input_value[0] * self.active_input_value[1]
 
+        elif self.operation_type == '/':
+            if self.active_input_value[1] > 0:
+                self.output_val = self.active_input_value[0] / self.active_input_value[1]
+            elif self.active_input_value[0] > 0:
+                self.output_val = self.active_input_value[1] / self.active_input_value[0]
+            else:
+                self.output_val = 0
+
 
 class Net1D:
     """Creates a 1D net of gates"""
@@ -81,8 +89,8 @@ class Net1D:
         self.output = self.net[self.output_gate_index].output_val
         self.potential = self.calculate_total_potential()
 
-        # initiate gates' links
-        self.init_gates_links()
+        # inits
+        self.init_gates_links()  # sets initial links
         self.calculate_all_outputs()  # sets initial output_val in the gates
 
     # Init methods
@@ -105,7 +113,7 @@ class Net1D:
     def show_output(self):
         """Prints output of the Net"""
 
-        print(f'Output gate: {self.output_gate_index}  Output value: {self.output}')
+        print(f'Output gate: {self.output_gate_index}  Output value: {self.net[self.output_gate_index].output_val}')
 
     def show_whole_net(self):
         """Prints all Gates indexes, operations and links"""
@@ -161,13 +169,14 @@ class Net1D:
 
     # Calculation methods
     def run_data(self, _input_set, i):
+        """Method takes one input set of data _input_set and it's iterable to extract coresponding output"""
 
-        for i in range(self.params.input_length):
-            self.net[i].output_val = _input_set[i]
+        for x in range(self.params.input_length):
+            self.net[x].output_val = _input_set[x]
 
         self.calculate_all_outputs()
 
-        return pow((self.params.output[i] - self.output), 2)
+        return pow((self.params.output[i] - self.net[self.output_gate_index].output_val), 2)
 
     def calculate_all_outputs(self):
         """Method recalculates all values in gates - all net"""

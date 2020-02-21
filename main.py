@@ -14,6 +14,9 @@ from simulation import Simulation
 
 def main():
     """Main function"""
+    # pdb mutacji
+    # zastapic kT = beta
+    # demo
 
     input_size = 5
     number_of_inputs = 50

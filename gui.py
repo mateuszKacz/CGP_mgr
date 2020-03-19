@@ -32,6 +32,8 @@ class GUI(tk.Frame):
         self.sim_continue = True
         self.simulation.net.show_net()
         self.params.temp = 100.
+
+        # starting main simulation loop
         self.simulation.simulate(self.sim_continue)
 
 

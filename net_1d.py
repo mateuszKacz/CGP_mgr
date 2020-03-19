@@ -171,7 +171,7 @@ class Net1D:
     def run_data(self, _input_set, i):
         """Method takes one input set of data _input_set and it's iterable to extract coresponding output"""
 
-        for x in range(self.params.input_length):
+        for x in range(self.params.input_length): # set input values in input gates
             self.net[x].output_val = _input_set[x]
 
         self.calculate_all_outputs()

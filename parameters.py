@@ -22,10 +22,14 @@ class Parameters:
     :type pdb_link_change: float
     :param pdb_gate_operation_change: probability of operation mutation in the Gate
     :type pdb_gate_operation_change: float
+    :param _pdb_output_change: probability of changing the output gate
+    :type _pdb_output_change: float
+    :param _beta_const: control parameter which is a representation of cooling (simulated anealing)
+    :type _beta_const: float
     """
 
     def __init__(self, _operations, _size_1d, _inputs, _output, _num_copies, _pdb_link_change=0.2,
-                 _pdb_gate_operation_change=0.2, _pdb_output_change=0.2, _k_const=1., _temp=100):
+                 _pdb_gate_operation_change=0.2, _pdb_output_change=0.2, _beta_const=1.):
 
         # Validation data
         self.inputs = _inputs
@@ -46,5 +50,4 @@ class Parameters:
         self.operations = _operations  # list of possible operations performed by the Gate (one at a time)
 
         # Annealing parameters
-        self.k_const = _k_const
-        self.temp = _temp
+        self.beta_const = _beta_const

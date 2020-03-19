@@ -28,7 +28,7 @@ class Simulation:
 
     def calc_acceptance_probability(self, new_net_potential, net_potential):
         """Method calculates probability of acceptance new not optimal state.
-        Function: e(-k * d_E/T)
+        Function: e(- Beta * delta_E)
 
         :param new_net_potential: potential of the mutated (child) Net
         :type new_net_potential: double
@@ -37,7 +37,7 @@ class Simulation:
         :return pdb(0,1)
         """
 
-        return exp(- self.params.k_const * (abs(new_net_potential-net_potential))/self.params.temp)
+        return exp(- self.params.beta_const * (abs(new_net_potential-net_potential)))
 
     def simulate(self, _sim_continue):
         """Method runs net mutation on all Gates"""
@@ -45,7 +45,7 @@ class Simulation:
         i = 0
         while _sim_continue:
 
-            i += 1  # iterator
+            i += 1  # simulation iterator
             potentials = []
             copies = self.multiply_net()  # makes n_copies of Net
 
@@ -64,19 +64,16 @@ class Simulation:
                 if random() <= acc_pdb:
                     self.net = copies[best_copy_index]
 
-            # controls
+            # controls.
             if i % 100 == 0:
                 print(i)
-                print(f'{self.net.potential} \t {self.params.temp}')
-                if self.params.temp > 15:
+                print(f'{self.net.potential} \t {self.params.beta_const}')
 
-                    self.params.temp -= 1
-                else:
-                    self.params.temp -= 0.1
+                self.params.beta_const -= 1
 
 
             # end simulation
-            if i % 100000 == 0:
+            if i % 100000 == 0: # quit if number of simulation's iterations reach 100 000.
                 _sim_continue = False
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()
@@ -88,7 +85,7 @@ class Simulation:
                 data = DataFrame(acc_pdb_data)
                 data.to_csv('data.txt')
 
-            if self.net.potential < 0.1:
+            if self.net.potential < 0.1: # quit if there is a very good similarity to ideal case or ideal case.
                 _sim_continue = False
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()
@@ -97,5 +94,3 @@ class Simulation:
                 print(self.params.output)
                 print(self.net.potential)
                 print(i)
-
-

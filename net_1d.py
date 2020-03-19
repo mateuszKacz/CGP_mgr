@@ -1,7 +1,7 @@
-#   Class contains classes Gate1D
-#      and Net1D - those are the main
-#       objects of the simulation
-# ------------------------------------ #
+#
+#   Class contains classes Gate1D and Net1D - those
+#   are the main objects of the simulation.
+# ---------------------------------------- #
 
 import random as rnd
 from math import sqrt

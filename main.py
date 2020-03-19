@@ -1,8 +1,7 @@
-###################################################
-#####    Main script executing crucial        #####
-#####  procedures and initializing simulation #####
-#####                                         #####
-###################################################
+#
+#   Main script executing crucial
+#   procedures and initializing simulation
+# ---------------------------------------- #
 
 import random as rnd
 import tkinter as tk

@@ -1,3 +1,5 @@
+# Scratch data visulatization file
+
 import pandas as pd
 import matplotlib.pyplot as plt
 

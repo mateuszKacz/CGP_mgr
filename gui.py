@@ -1,3 +1,8 @@
+#
+#   GUI generator script
+#   creates components and widgets
+# ---------------------------------------- #
+
 import tkinter as tk
 
 

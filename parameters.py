@@ -1,8 +1,7 @@
-###################################################
-#####    Class contains main parameteters     #####
-#####        and initial values               #####
-#####                                         #####
-###################################################
+#
+#   Class contains main parameteters
+#   and initial values
+# ---------------------------------------- #
 
 
 class Parameters:

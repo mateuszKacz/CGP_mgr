@@ -1,6 +1,7 @@
+#
 #   Class contains main logic
 #      of the simulation.
-# ------------------------------------ #
+# ---------------------------------------- #
 
 from copy import deepcopy
 from math import exp

@@ -1,5 +1,5 @@
 #
-#   Data generation script
+#   Data Gen generation script
 #   this is sample data normally
 #   user should prepare give data file
 # ---------------------------------------- #

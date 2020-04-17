@@ -1,5 +1,5 @@
 #
-#   Input script with objective function
+#   Sample Inputs script with objective function
 #   Prepared by user - should match the data
 # ---------------------------------------- #
 

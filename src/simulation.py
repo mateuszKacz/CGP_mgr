@@ -9,6 +9,8 @@ from random import random
 from src.net_1d import Net1D
 from pandas import DataFrame
 
+# TODO: Fix Simulation classto fit new schema
+
 
 class Simulation:
     """Main object of the simulation"""

@@ -1,9 +1,7 @@
 #
-#   Input script with gate functions
+#   Sample Inputs script with gate functions
 #   Prepared by user - should match the data
 # ---------------------------------------- #
-
-
 
 # TODO: Code binary operations
 

@@ -6,14 +6,14 @@
 import random as rnd
 import tkinter as tk
 
-from gui import GUI
-from parameters import Parameters
-from simulation import Simulation
+from src.gui import GUI
+from src.parameters import Parameters
+from src.simulation import Simulation
 
 
 def main():
     """Main function"""
-
+    # TODO: Remove data generation from here and ad in sample_data.py file
     input_size = 5 # number of input data in one set
     number_of_inputs = 50 # number of data sets to supply the net
 
@@ -21,6 +21,7 @@ def main():
 
     data_out = [sum(data_in[i]) for i in range(len(data_in))] # output data - in this case we're using sum and we expect the Net to "learn" how to add input values. The function can be changed of course
 
+    # TODO: fix parameters
     # all the parameters are explained in doc-string in the parameters.py file
     params = Parameters(_operations=['+', '-', '*', '/'], _size_1d=25, _inputs=data_in, _output=data_out, _num_copies=4,
                         _pdb_link_change=0.1, _pdb_gate_operation_change=0.1, _pdb_output_change=0.1, _beta_const=100)

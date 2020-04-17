@@ -6,7 +6,7 @@
 from copy import deepcopy
 from math import exp
 from random import random
-from net_1d import Net1D
+from src.net_1d import Net1D
 from pandas import DataFrame
 
 

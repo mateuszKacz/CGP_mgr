@@ -1,0 +1,4 @@
+bin_and
+bin_or
+bin_xor
+bin_xand

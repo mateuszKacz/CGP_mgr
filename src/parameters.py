@@ -3,12 +3,14 @@
 #   and initial values
 # ---------------------------------------- #
 
+from numpy import genfromtxt
+
 
 class Parameters:
     """Class contains main initial values and parameters of the simulation
 
     :param operations: list of possible operations performed by gates
-    :type operations: list
+    :type func_names: list
     :param size_1d: number of gates to create in the network
     :type size_1d: int
     :param inputs: array of data entries to put through the net
@@ -27,12 +29,14 @@ class Parameters:
     :type _beta_const: float
     """
 
-    def __init__(self, _operations, _size_1d, _inputs, _output, _num_copies, _pdb_link_change=0.2,
+    def __init__(self, _paths, _size_1d, _input_data_size, _num_copies, _pdb_link_change=0.2,
                  _pdb_gate_operation_change=0.2, _pdb_output_change=0.2, _beta_const=1.):
 
-        # Validation data
-        self.inputs = _inputs
-        self.output = _output
+        # User files
+        self.data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
+        self.path_gate_func = _paths['gate_func']
+        self.path_obj_func = _paths['obj_func']
+        self.func_names = list(genfromtxt(_paths['gate_func_names'], delimiter='\n'))  # list of possible func_names performed by the Gate (one at a time)
 
         # Probabilities
         self.pdb_link_change = _pdb_link_change
@@ -41,12 +45,11 @@ class Parameters:
 
         # 1D Net Params
         self.size_1d = _size_1d  # number of calculating Gates in the Net
-        self.input_length = len(self.inputs[0])  # number of input Gates
+        self.input_length = _input_data_size  # number of input Gates
         self.total_size = self.size_1d + self.input_length  # total number of Gates in the Net (including input Gates)
 
         # Other parameters
         self.num_copies = _num_copies  # number of Net copies created every step of the mutation
-        self.operations = _operations  # list of possible operations performed by the Gate (one at a time)
 
-        # Annealing parameters
+        # Annealing parameter
         self.beta_const = _beta_const

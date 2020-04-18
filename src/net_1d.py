@@ -4,29 +4,30 @@
 # ---------------------------------------- #
 
 import random as rnd
-from math import sqrt
+import src.user_inputs as ui
+from src.user_inputs import gate_functions
 
 
 class Gate1D:
     """Creates 1D Gate with functions."""
 
-    def __init__(self, params, operation_type, gate_index, value=0.):
+    def __init__(self, _params, _gate_func, _gate_index, _value=0.):
 
         """
-        :param params: parmeters of the simulation
-        :type params: Parameters
-        :param operation_type: one of the operations listed in params.operations
-        :type operation_type: str
-        :param gate_index: index of the gate in net
-        :type gate_index: int
-        :param value: initial output_val of the gate
-        :type value: double
+        :param _params: parmeters of the simulation
+        :type _params: Parameters
+        :param _gate_func: one of the func_names listed in _params.func_names
+        :type _gate_func: str
+        :param _gate_index: index of the gate in net
+        :type _gate_index: int
+        :param _value: initial output_val of the gate
+        :type _value: double
         """
 
-        self.params = params
-        self.operation_type = operation_type
-        self.output_val = value
-        self.gate_index = gate_index
+        self.params = _params
+        self.gate_func = _gate_func
+        self.output_val = _value
+        self.gate_index = _gate_index
 
         # input values
         self.active_input_index = [0, 0]
@@ -35,38 +36,33 @@ class Gate1D:
     def print_type(self):
         """Prints gate's current operation."""
 
-        print(self.operation_type)
+        print(self.gate_func)
 
     def change_operation(self):
         """Randomly changes gate operation."""
 
         if rnd.random() <= self.params.pdb_gate_operation_change:
 
-            self.operation_type = self.params.operations[rnd.randint(0, len(self.params.operations)-1)]
+            self.gate_func = rnd.randint(0, len(self.params.func_names) - 1)
             self.run_operation()
 
     def run_operation(self):
         """Calculates gate output_val."""
+        func = self.params.func_names[self.gate_func]
+        self.output_val = ui.gate_functions.func(self.active_input_value)
 
-        if self.operation_type == '+':
 
-            self.output_val = sum(self.active_input_value)
+def rnd_gate(stop, start=0):
+    """Chooses random gate from the Net.
 
-        elif self.operation_type == '-':
+    :param stop: gate index in the net to stop random choice
+    :type stop: int
+    :param start: gate index to start random choice
+    :type start: int
+    :return random gate index in range(start, stop) of type int
+    """
 
-            self.output_val = self.active_input_value[0] - self.active_input_value[1]
-
-        elif self.operation_type == '*':
-
-            self.output_val = self.active_input_value[0] * self.active_input_value[1]
-
-        elif self.operation_type == '/':
-            if self.active_input_value[1] > 0:
-                self.output_val = self.active_input_value[0] / self.active_input_value[1]
-            elif self.active_input_value[0] > 0:
-                self.output_val = self.active_input_value[1] / self.active_input_value[0]
-            else:
-                self.output_val = 0
+    return rnd.randint(start, stop - 1)
 
 
 class Net1D:
@@ -75,17 +71,17 @@ class Net1D:
     def __init__(self, params):
 
         """
-        :param params: parmeters of the simulation
+        :param params: parameters of the simulation
         :type params: Parameters
         """
 
         self.params = params
-        self.net = [Gate1D(self.params, 'input', i, value=self.params.inputs[0][i]) for i in range(self.params.input_length)]
-        self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.operations), self.params.input_length + i) for i in
-                               range(self.params.size_1d)]
+        self.net = [Gate1D(self.params, 'input', i, _value=0) for i in range(self.params.input_length)]
+        self.net = self.net + [Gate1D(self.params, rnd.randint(0, len(self.params.func_names) - 1),
+                                      self.params.input_length + i) for i in range(self.params.size_1d)]
 
         # Net Output
-        self.output_gate_index = self.rnd_gate(self.params.total_size)
+        self.output_gate_index = rnd_gate(self.params.total_size)
         self.output = self.net[self.output_gate_index].output_val
         self.potential = self.calculate_total_potential()
 
@@ -99,7 +95,7 @@ class Net1D:
 
         for gate_index in range(self.params.input_length, len(self.net)):
             for link in range(2):
-                rand_gate = self.rnd_gate(gate_index)
+                rand_gate = rnd_gate(gate_index)
                 self.net[gate_index].active_input_index[link] = rand_gate
                 self.net[gate_index].active_input_value[link] = self.net[rand_gate].output_val
 
@@ -108,32 +104,20 @@ class Net1D:
         """Prints net indexes with values"""
 
         for gate in self.net:
-            print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + str(gate.operation_type))
+            print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + str(gate.gate_func))
 
     def show_output(self):
         """Prints output of the Net"""
 
-        print(f'Output gate: {self.output_gate_index}  Output value: {self.net[self.output_gate_index].output_val}')
+        print(f'Output gate: {self.output_gate_index}  Output _value: {self.net[self.output_gate_index].output_val}')
 
     def show_whole_net(self):
-        """Prints all Gates indexes, operations and links"""
+        """Prints all Gates indexes, func_names and links"""
 
         for gate in self.net:
-            print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: ' + str(gate.active_input_index) + '   \t' + str(gate.operation_type))
+            print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: ' + str(gate.active_input_index) + '   \t' + str(gate.gate_func))
 
     # Random methods
-    def rnd_gate(self, stop, start=0):
-        """Chooses random gate from the Net.
-
-        :param stop: gate index in the net to stop random choice
-        :type stop: int
-        :param start: gate index to start random choice
-        :type start: int
-        :return random gate index in range(start, stop) of type int
-        """
-
-        return rnd.randint(start, stop - 1)
-
     def rnd_output_gate(self):
         """Chooses random gate from the net"""
 
@@ -151,16 +135,16 @@ class Net1D:
         """
         # Atempt to mutate first link
         if rnd.random() <= self.params.pdb_link_change:
-            self.net[gate_index].active_input_index[0] = self.rnd_gate(gate_index)
+            self.net[gate_index].active_input_index[0] = rnd_gate(gate_index)
         # Atempt to mutate second link
         if rnd.random() <= self.params.pdb_link_change:
-            self.net[gate_index].active_input_index[1] = self.rnd_gate(gate_index)
+            self.net[gate_index].active_input_index[1] = rnd_gate(gate_index)
 
     # Update methods
     def update_gate_value(self, gate_index):
         """Method updates input values of the Gate and runs operation on it
 
-        :param gate_index: index of the gate in the net to update value in
+        :param gate_index: index of the gate in the net to update _value in
         :type gate_index: int
         """
         self.net[gate_index].active_input_value[0] = self.net[self.net[gate_index].active_input_index[0]].output_val
@@ -168,7 +152,7 @@ class Net1D:
         self.net[gate_index].run_operation()
 
     # Calculation methods
-    def run_data(self, _input_set, i):
+    def run_data(self, _input_set):
         """Method takes one input set of data _input_set and it's iterable to extract coresponding output"""
 
         for x in range(self.params.input_length): # set input values in input gates
@@ -176,7 +160,7 @@ class Net1D:
 
         self.calculate_all_outputs()
 
-        return pow((self.params.output[i] - self.net[self.output_gate_index].output_val), 2)
+        return self.net[self.output_gate_index].output_val
 
     def calculate_all_outputs(self):
         """Method recalculates all values in gates - all net"""
@@ -197,12 +181,12 @@ class Net1D:
         """Method checks how close the net is to real answer.
         Function used is quadratic length. sqrt(sum([output-data_output]^2))
         """
-        diff_list = []
+        prediction = []
 
         # Calculates differences between outputs in all data sets
-        for i in range(len(self.params.inputs)):
-            diff_list.append(self.run_data(self.params.inputs[i], i))
-
-        self.potential = sqrt(sum(diff_list))
+        for i in range(len(self.params.data)):
+            prediction.append(self.run_data(self.params.data[i][:self.params.input_length]))
+        # TODO
+        self.potential = ui.objective_function.obj_func(self.params.data[:][self.params.input_length:], prediction)
 
         return self.potential

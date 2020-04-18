@@ -3,24 +3,27 @@
 #   creates components and widgets
 # ---------------------------------------- #
 
-from tkinter import Frame, Button, Label, LEFT, RIGHT, TOP, BOTTOM
+from tkinter import Frame, Button, Label
 from tkinter.filedialog import askopenfilename
+from src.simulation import Simulation
+from src.parameters import Parameters
+
+# TODO: Add rest of parameters to set
 
 
 class GUI(Frame):
 
-    def __init__(self, _params, _simulation, _master=None):
+    def __init__(self, _master=None):
         super().__init__(_master)
         self.master = _master
-        self.params = _params
+        self.master.title("CGP")
         self.create_widgets()
 
         # Simulation
         self.sim_continue = True
-        self.simulation = _simulation
 
         # Input paths
-        self.paths = {'data_file': '', 'gate_func': '', 'gate_func_names': '', 'obj_func': ''}
+        self.user_input_paths = {'data_file': '', 'gate_func': '', 'gate_func_names': '', 'obj_func': ''}
 
     def create_widgets(self):
 
@@ -90,19 +93,35 @@ class GUI(Frame):
 
     def start(self):
         """Starts the simulation"""
+        print("Initiating components...")
+        # Creating simulation objects
+
+        params = Parameters(_paths=self.user_input_paths, _input_data_size=5, _size_1d=25, _num_copies=4,
+                            _pdb_link_change=0.1, _pdb_gate_operation_change=0.1, _pdb_output_change=0.1, _beta_const=100)
+        print("simulation object...")
+        simulation = Simulation(params)
+
+        # Printing initial Net
+        print("Initial Network\n")
+        simulation.net.show_net()
+
+        # Starting simulation
         print("Start")
         self.sim_continue = True
-        self.simulation.net.show_net()
-        self.params.temp = 100.
+        # Printing initial Net
+        simulation.net.show_net()
+
+        # Setting Anealing initial parameter
+        params.beta_const = 100.
 
         # starting main simulation loop
-        self.simulation.simulate(self.sim_continue)
+        simulation.simulate(self.sim_continue)
 
     def reset(self):
-        """Resets chosen paths to default value"""
+        """Resets chosen paths to default _value"""
 
-        for key in self.paths:
-            self.paths[key] = ''
+        for key in self.user_input_paths:
+            self.user_input_paths[key] = ''
 
         self.label_choose_obj_func.config(text='~/')
         self.label_choose_gate_func_names.config(text='~/')
@@ -113,7 +132,7 @@ class GUI(Frame):
         """Function runs when button is pressed"""
 
         filename = askopenfilename()
-        self.paths['gate_func'] = filename
+        self.user_input_paths['gate_func'] = filename
 
         if filename != '':
             self.label_choose_data.config(text=filename)
@@ -122,7 +141,7 @@ class GUI(Frame):
         """Function runs when button is pressed"""
 
         filename = askopenfilename()
-        self.paths['gate_func'] = filename
+        self.user_input_paths['gate_func'] = filename
 
         if filename != '':
             self.label_choose_gate_func.config(text=filename)
@@ -131,7 +150,7 @@ class GUI(Frame):
         """Function runs when button is pressed"""
 
         filename = askopenfilename()
-        self.paths['gate_func_names'] = filename
+        self.user_input_paths['gate_func_names'] = filename
 
         if filename != '':
             self.label_choose_gate_func_names.config(text=filename)
@@ -140,7 +159,7 @@ class GUI(Frame):
         """Function runs when button is pressed"""
 
         filename = askopenfilename()
-        self.paths['obj_func'] = filename
+        self.user_input_paths['obj_func'] = filename
 
         if filename != '':
             self.label_choose_obj_func.config(text=filename)

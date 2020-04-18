@@ -1,9 +1,7 @@
 #
-#   Sample Inputs script with gate functions
+#   user_inputs script with gate functions
 #   Prepared by user - should match the data
 # ---------------------------------------- #
-
-# TODO: Code binary operations
 
 
 def bin_and(data):

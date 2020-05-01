@@ -7,8 +7,6 @@ import random as rnd
 import tkinter as tk
 
 from src.gui import GUI
-from src.parameters import Parameters
-from src.simulation import Simulation
 
 
 def main():

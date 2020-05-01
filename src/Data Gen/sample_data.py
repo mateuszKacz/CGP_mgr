@@ -9,11 +9,11 @@ import numpy as np
 import os.path
 
 input_size = 5  # number of input data in one set
-number_of_inputs = 50  # number of data sets to supply the net
+number_of_inputs = 300  # number of data sets to supply the net
 
 data_out = []
 
-for line in range(number_of_inputs):
+for line in range(number_of_inputs-130):
 
     dataset = [randint(0, 1) for x in range(input_size)]
     gate = dataset[0]
@@ -24,6 +24,12 @@ for line in range(number_of_inputs):
         else:
             gate = 0
     dataset.append(gate)
+    data_out.append(dataset)
+
+for line in range(130):
+
+    dataset = [1 for x in range(input_size+1)]
+
     data_out.append(dataset)
 
 data_out = np.array(data_out)

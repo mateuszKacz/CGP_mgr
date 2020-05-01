@@ -4,6 +4,7 @@
 # ---------------------------------------- #
 
 from numpy import genfromtxt
+import src.user_inputs.gate_functions as gate_functions
 
 
 class Parameters:
@@ -36,7 +37,10 @@ class Parameters:
         self.data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
         self.path_gate_func = _paths['gate_func']
         self.path_obj_func = _paths['obj_func']
-        self.func_names = list(genfromtxt(_paths['gate_func_names'], delimiter='\n'))  # list of possible func_names performed by the Gate (one at a time)
+        self.func_names = [func for func in dir(gate_functions) if not func.startswith('__')]
+
+        # Input Data
+        self.output = [x[5] for x in self.data]
 
         # Probabilities
         self.pdb_link_change = _pdb_link_change

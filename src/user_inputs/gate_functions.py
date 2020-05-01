@@ -5,16 +5,32 @@
 
 
 def bin_and(data):
-    return data[0] + data[1]
+
+    if data[0] == 1 and data[1] == 1:
+        return 1
+    else:
+        return 0
 
 
-def bin_subtract(data):
-    return data[0] - data[1]
+def bin_or(data):
+
+    if data[0] == 0 and data[1] == 0:
+        return 0
+    else:
+        return 1
 
 
 def bin_xor(data):
-    return data[0] * data[1]
+
+    if data[0] == data[1]:
+        return 0
+    else:
+        return 1
 
 
-def bin_xand(data):
-    return data[0] / data[1]
+def bin_nand(data):
+
+    if data[0] == 1 and data[1] == 1:
+        return 0
+    else:
+        return 1

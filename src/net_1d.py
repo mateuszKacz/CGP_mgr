@@ -4,7 +4,7 @@
 # ---------------------------------------- #
 
 import random as rnd
-import src.user_inputs as ui
+import src.user_inputs.objective_function as obj_func
 from src.user_inputs import gate_functions
 
 
@@ -48,8 +48,8 @@ class Gate1D:
 
     def run_operation(self):
         """Calculates gate output_val."""
-        func = self.params.func_names[self.gate_func]
-        self.output_val = ui.gate_functions.func(self.active_input_value)
+
+        self.output_val = eval('gate_functions.' + self.params.func_names[self.gate_func])(self.active_input_value)
 
 
 def rnd_gate(stop, start=0):
@@ -103,8 +103,11 @@ class Net1D:
     def show_net(self):
         """Prints net indexes with values"""
 
-        for gate in self.net:
-            print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + str(gate.gate_func))
+        for gate in self.net[:self.params.input_length]:
+            print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + gate.gate_func)
+
+        for gate in self.net[self.params.input_length:]:
+            print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + self.params.func_names[gate.gate_func])
 
     def show_output(self):
         """Prints output of the Net"""
@@ -114,8 +117,11 @@ class Net1D:
     def show_whole_net(self):
         """Prints all Gates indexes, func_names and links"""
 
-        for gate in self.net:
-            print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: ' + str(gate.active_input_index) + '   \t' + str(gate.gate_func))
+        for gate in self.net[:self.params.input_length]:
+            print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + gate.gate_func)
+
+        for gate in self.net[self.params.input_length:]:
+            print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: ' + str(gate.active_input_index) + '   \t' + self.params.func_names[gate.gate_func])
 
     # Random methods
     def rnd_output_gate(self):
@@ -186,7 +192,7 @@ class Net1D:
         # Calculates differences between outputs in all data sets
         for i in range(len(self.params.data)):
             prediction.append(self.run_data(self.params.data[i][:self.params.input_length]))
-        # TODO
-        self.potential = ui.objective_function.obj_func(self.params.data[:][self.params.input_length:], prediction)
+
+        self.potential = obj_func.obj_func(self.params.data[:][self.params.input_length:], prediction)
 
         return self.potential

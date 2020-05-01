@@ -9,6 +9,8 @@ from random import random
 from src.net_1d import Net1D
 from pandas import DataFrame
 
+NUM_SIM = 1000
+
 
 class Simulation:
     """Main object of the simulation"""
@@ -38,7 +40,7 @@ class Simulation:
         :return pdb(0,1)
         """
 
-        return exp(- self.params.beta_const * (abs(new_net_potential-net_potential)))
+        return exp(-(abs(new_net_potential-net_potential)*1000)/self.params.beta_const)
 
     def simulate(self, _sim_continue):
         """Method runs net mutation on all Gates"""
@@ -66,7 +68,7 @@ class Simulation:
                     self.net = copies[best_copy_index]
 
             # controls.
-            if i % 100 == 0:
+            if i % (NUM_SIM/100) == 0:
                 print(i)
                 print(f'{self.net.potential} \t {self.params.beta_const}')
 
@@ -74,7 +76,7 @@ class Simulation:
 
 
             # end simulation
-            if i % 100000 == 0: # quit if number of simulation's iterations reach 100 000.
+            if i % NUM_SIM == 0:  # quit if number of simulation's iterations reach 100 000.
                 _sim_continue = False
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()
@@ -83,10 +85,7 @@ class Simulation:
                 print(self.params.output)
                 print(self.net.potential)
 
-                data = DataFrame(acc_pdb_data)
-                data.to_csv('data.txt')
-
-            if self.net.potential < 0.1: # quit if there is a very good similarity to ideal case or ideal case.
+            if self.net.potential < 0.001:  # quit if there is a very good similarity to ideal case or ideal case.
                 _sim_continue = False
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()

@@ -10,37 +10,37 @@ import src.user_inputs.gate_functions as gate_functions
 class Parameters:
     """Class contains main initial values and parameters of the simulation
 
-    :param operations: list of possible operations performed by gates
-    :type func_names: list
-    :param size_1d: number of gates to create in the network
-    :type size_1d: int
-    :param inputs: array of data entries to put through the net
-    :type inputs: list
-    :param output: array of answers for the net
-    :type output: list
-    :param num_copies: number of copies created and mutated every step of the simulation
-    :type num_copies: int
-    :param pdb_link_change: probability of link changing in the Gate
-    :type pdb_link_change: float
-    :param pdb_gate_operation_change: probability of operation mutation in the Gate
-    :type pdb_gate_operation_change: float
+    :param _gate_func: list of functions (gate operations)
+    :type _gate_func: list
+    :param _obj_func: function that calculates fitness of the Net
+    :type _obj_func: list
+    :param _data: list of values to feed the net
+    :type _data: list
+    :param _input_data_size: number of input values to the Net
+    :type _input_data_size: int
+    :param _size_1d: number of gates to create in the network
+    :type _size_1d: int
+    :param _num_copies: number of copies created and mutated every step of the simulation
+    :type _num_copies: int
+    :param _pdb_link_change: probability of link changing in the Gate
+    :type _pdb_link_change: float
+    :param _pdb_gate_operation_change: probability of operation mutation in the Gate
+    :type _pdb_gate_operation_change: float
     :param _pdb_output_change: probability of changing the output gate
     :type _pdb_output_change: float
-    :param _beta_const: control parameter which is a representation of cooling (simulated anealing)
-    :type _beta_const: float
+    :param _annealing_param: control parameter which is a representation of cooling (simulated anealing)
+    :type _annealing_param: float
     """
 
-    def __init__(self, _paths, _size_1d, _input_data_size, _num_copies, _pdb_link_change=0.2,
-                 _pdb_gate_operation_change=0.2, _pdb_output_change=0.2, _beta_const=1.):
+    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d, _num_copies, _pdb_link_change=0.2,
+                 _pdb_gate_operation_change=0.2, _pdb_output_change=0.2, _annealing_param=100):
 
         # User files
-        self.data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
-        self.path_gate_func = _paths['gate_func']
-        self.path_obj_func = _paths['obj_func']
-        self.func_names = [func for func in dir(gate_functions) if not func.startswith('__')]
+        self.data = _data
+        self.gate_func = _gate_func
 
         # Input Data
-        self.output = [x[5] for x in self.data]
+        self.output = [x[_input_data_size] for x in self.data]
 
         # Probabilities
         self.pdb_link_change = _pdb_link_change
@@ -56,4 +56,4 @@ class Parameters:
         self.num_copies = _num_copies  # number of Net copies created every step of the mutation
 
         # Annealing parameter
-        self.beta_const = _beta_const
+        self.annealing_param = _annealing_param

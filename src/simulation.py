@@ -7,9 +7,8 @@ from copy import deepcopy
 from math import exp
 from random import random
 from src.net_1d import Net1D
-from pandas import DataFrame
 
-NUM_SIM = 1000
+NUM_SIM = 10000
 
 
 class Simulation:
@@ -19,6 +18,7 @@ class Simulation:
 
         self.params = _params
 
+        self.annealing_step = float((self.params.annealing_param-1)/NUM_SIM)
         # initialize first net
         self.net = Net1D(self.params)
 
@@ -40,15 +40,17 @@ class Simulation:
         :return pdb(0,1)
         """
 
-        return exp(-(abs(new_net_potential-net_potential)*1000)/self.params.beta_const)
+        return exp(-(abs(new_net_potential-net_potential)*1000)/self.params.annealing_param)
 
-    def simulate(self, _sim_continue):
+    def simulate(self):
         """Method runs net mutation on all Gates"""
         acc_pdb_data = []
         i = 0
-        while _sim_continue:
+        while self.params.annealing_param >= 0.1:
 
             i += 1  # simulation iterator
+            self.params.annealing_param -= self.annealing_step
+
             potentials = []
             copies = self.multiply_net()  # makes n_copies of Net
 
@@ -67,30 +69,17 @@ class Simulation:
                 if random() <= acc_pdb:
                     self.net = copies[best_copy_index]
 
-            # controls.
-            if i % (NUM_SIM/100) == 0:
+            # print control params
+            if i % 200 == 0:
                 print(i)
-                print(f'{self.net.potential} \t {self.params.beta_const}')
-
-                self.params.beta_const -= 1
-
+                print(f'{self.net.potential} \t {self.params.annealing_param}')
 
             # end simulation
-            if i % NUM_SIM == 0:  # quit if number of simulation's iterations reach 100 000.
-                _sim_continue = False
+            if i % NUM_SIM == 0:  # quit if number
+                print("Final solution")
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()
                 self.net.show_output()
                 print(self.net.output)
                 print(self.params.output)
                 print(self.net.potential)
-
-            if self.net.potential < 0.001:  # quit if there is a very good similarity to ideal case or ideal case.
-                _sim_continue = False
-                self.net.show_whole_net()
-                self.net.calculate_all_outputs()
-                self.net.show_output()
-                print(self.net.output)
-                print(self.params.output)
-                print(self.net.potential)
-                print(i)

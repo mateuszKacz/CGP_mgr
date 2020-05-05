@@ -83,3 +83,14 @@ class Simulation:
                 print(self.net.output)
                 print(self.params.output)
                 print(self.net.potential)
+
+            if self.net.potential == 0.:
+                print("Final solution")
+                self.net.show_whole_net()
+                self.net.calculate_all_outputs()
+                self.net.show_output()
+                print(self.net.output)
+                print(self.params.output)
+                print(self.net.potential)
+                break
+

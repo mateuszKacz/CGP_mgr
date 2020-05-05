@@ -13,10 +13,10 @@ from numpy import genfromtxt
 
 def main():
     """Main function"""
-
+    # input_random_gate = nand/or/or/and
     gate_fun = [gate_func.bin_and, gate_func.bin_nand, gate_func.bin_or, gate_func.bin_xor]
 
-    data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
+    data = genfromtxt('user_inputs/input_random_gate.txt', delimiter=',')
 
     cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5)
 

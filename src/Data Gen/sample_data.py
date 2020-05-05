@@ -3,7 +3,6 @@
 #   user should prepare give data file
 # ---------------------------------------- #
 
-from random import randint
 import numpy as np
 import os.path
 

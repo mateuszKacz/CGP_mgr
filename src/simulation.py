@@ -82,6 +82,7 @@ class Simulation:
                 self.net.show_output()
                 print(self.net.output)
                 print(self.params.output)
+                print(self.net.prediction)
                 print(self.net.potential)
 
             if self.net.potential == 0.:
@@ -89,8 +90,11 @@ class Simulation:
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()
                 self.net.show_output()
-                print(self.net.output)
+                print("Data outputs:")
                 print(self.params.output)
+                print("Net output")
+                print(self.net.prediction)
+                print("Obj function value:")
                 print(self.net.potential)
                 break
 

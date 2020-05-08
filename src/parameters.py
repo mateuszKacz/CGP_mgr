@@ -22,30 +22,24 @@ class Parameters:
     :type _size_1d: int
     :param _num_copies: number of copies created and mutated every step of the simulation
     :type _num_copies: int
-    :param _pdb_link_change: probability of link changing in the Gate
-    :type _pdb_link_change: float
-    :param _pdb_gate_operation_change: probability of operation mutation in the Gate
-    :type _pdb_gate_operation_change: float
-    :param _pdb_output_change: probability of changing the output gate
-    :type _pdb_output_change: float
+    :param _pdb_mutation: Probability of mutation (link change, operation change, output gate change)
+    :type _pdb_mutation: float
     :param _annealing_param: control parameter which is a representation of cooling (simulated anealing)
     :type _annealing_param: float
     """
 
-    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d, _num_copies, _pdb_link_change=0.2,
-                 _pdb_gate_operation_change=0.2, _pdb_output_change=0.2, _annealing_param=100):
+    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d, _num_copies, _pdb_mutation=0.03,
+                 _annealing_param=100):
 
         # User files
         self.data = _data
         self.gate_func = _gate_func
 
         # Input Data
-        self.output = [x[_input_data_size] for x in self.data]
+        self.output = [int(x[_input_data_size]) for x in self.data]
 
         # Probabilities
-        self.pdb_link_change = _pdb_link_change
-        self.pdb_gate_operation_change = _pdb_gate_operation_change
-        self.pdb_output_change = _pdb_output_change
+        self.pdb_mutation = _pdb_mutation
 
         # 1D Net Params
         self.size_1d = _size_1d  # number of calculating Gates in the Net

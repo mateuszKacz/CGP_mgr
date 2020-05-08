@@ -8,6 +8,7 @@ def obj_func(data_input, net_output):
     """Sample user-defined function"""
     score = []
     for i in range(len(data_input)):
+
         if data_input[i][5] == net_output[i]:
             score.append(0)
         else:

@@ -41,7 +41,7 @@ class Gate1D:
     def change_operation(self):
         """Randomly changes gate operation."""
 
-        if rnd.random() <= self.params.pdb_gate_operation_change:
+        if rnd.random() <= self.params.pdb_mutation:
 
             self.gate_func = rnd.choice(self.params.gate_func)
             self.run_operation()
@@ -76,6 +76,7 @@ class Net1D:
         """
 
         self.params = params
+        self.prediction = []
         self.net = [Gate1D(self.params, 'input', i, _value=0) for i in range(self.params.input_length)]
         self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.gate_func), self.params.input_length + i)
                                for i in range(self.params.size_1d)]
@@ -128,7 +129,7 @@ class Net1D:
     def rnd_output_gate(self):
         """Chooses random gate from the net"""
 
-        if rnd.random() <= self.params.pdb_output_change:
+        if rnd.random() <= self.params.pdb_mutation:
 
             self.output_gate_index = rnd.randint(0, self.params.total_size - 1)
 
@@ -141,10 +142,10 @@ class Net1D:
         :type gate_index: int
         """
         # Atempt to mutate first link
-        if rnd.random() <= self.params.pdb_link_change:
+        if rnd.random() <= self.params.pdb_mutation:
             self.net[gate_index].active_input_index[0] = rnd_gate(gate_index)
         # Atempt to mutate second link
-        if rnd.random() <= self.params.pdb_link_change:
+        if rnd.random() <= self.params.pdb_mutation:
             self.net[gate_index].active_input_index[1] = rnd_gate(gate_index)
 
     # Update methods
@@ -188,12 +189,13 @@ class Net1D:
         """Method checks how close the net is to real answer.
         Function used is quadratic length. sqrt(sum([output-data_output]^2))
         """
-        prediction = []
+        self.prediction = []
 
         # Calculates differences between outputs in all data sets
         for i in range(len(self.params.data)):
-            prediction.append(self.run_data(self.params.data[i][:self.params.input_length]))
+            self.prediction.append(self.run_data(self.params.data[i][:self.params.input_length]))
 
-        self.potential = obj_func.obj_func(self.params.data[:][self.params.input_length:], prediction)
+        self.potential = obj_func.obj_func(self.params.data, self.prediction)
+        self.output = self.net[self.output_gate_index].output_val  # refreshing param value after calculations
 
         return self.potential

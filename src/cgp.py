@@ -9,9 +9,9 @@ from src.simulation import Simulation
 
 class CGP:
     """Main CGP-algorithm object which is initialized by the User."""
-
-    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d=15, _num_copies=5, _pdb_link_change=0.1,
-                 _pdb_gate_operation_change=0.1, _pdb_output_change=0.1, _annealing_param=100):
+    # jedno pdb zamiast 3
+    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d=15, _num_copies=5, _pdb_mutation=0.03,
+                 _annealing_param=100):
 
         print("Setting Parameters...")
         self.params = Parameters(_gate_func=_gate_func,
@@ -20,9 +20,7 @@ class CGP:
                                  _input_data_size=_input_data_size,
                                  _size_1d=_size_1d,
                                  _num_copies=_num_copies,
-                                 _pdb_link_change=_pdb_link_change,
-                                 _pdb_gate_operation_change=_pdb_gate_operation_change,
-                                 _pdb_output_change=_pdb_output_change,
+                                 _pdb_mutation=_pdb_mutation,
                                  _annealing_param=_annealing_param)
 
         print("Creating Simulation components...")

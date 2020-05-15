@@ -9,8 +9,8 @@ from src.simulation import Simulation
 
 class CGP:
     """Main CGP-algorithm object which is initialized by the User."""
-    # jedno pdb zamiast 3
-    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d=15, _num_copies=5, _pdb_mutation=0.03,
+
+    def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d=15, _num_copies=5, _pdb_mutation=0.06,
                  _annealing_param=100):
 
         print("Setting Parameters...")

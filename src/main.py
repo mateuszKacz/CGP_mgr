@@ -3,8 +3,6 @@
 #   procedures and initializing simulation
 # ---------------------------------------- #
 
-
-import tkinter as tk
 import src.user_inputs.objective_function as obj_func
 import src.user_inputs.gate_functions as gate_func
 from src.cgp import CGP

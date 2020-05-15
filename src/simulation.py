@@ -40,7 +40,7 @@ class Simulation:
         :return pdb(0,1)
         """
 
-        return exp(-(abs(new_net_potential-net_potential)*1000)/self.params.annealing_param)
+        return exp(-(abs(new_net_potential-net_potential)*10)/self.params.annealing_param)
 
     def simulate(self):
         """Method runs net mutation on all Gates"""
@@ -71,18 +71,20 @@ class Simulation:
 
             # print control params
             if i % 200 == 0:
-                print(i)
-                print(f'{self.net.potential} \t {self.params.annealing_param}')
+                print(f'Sim iter: {i}')
+                print('Obj func: {:.3f} \t Annealing param value: {:.2f}'.format(self.net.potential, self.params.annealing_param))
 
             # end simulation
-            if i % NUM_SIM == 0:  # quit if number
+            if i % NUM_SIM == 0:  # quit if initial number of simulation steps is reached
                 print("Final solution")
                 self.net.show_whole_net()
                 self.net.calculate_all_outputs()
                 self.net.show_output()
-                print(self.net.output)
+                print("Data outputs:")
                 print(self.params.output)
+                print("Net output")
                 print(self.net.prediction)
+                print("Obj function value:")
                 print(self.net.potential)
 
             if self.net.potential == 0.:

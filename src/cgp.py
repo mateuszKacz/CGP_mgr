@@ -5,6 +5,7 @@
 
 from src.parameters import Parameters
 from src.simulation import Simulation
+import json
 
 
 class CGP:
@@ -34,7 +35,7 @@ class CGP:
         """
 
         if _load:
-            self.load()
+            self.load("cgp_evolved_net.txt")
         else:
             print("Setting Parameters...")
             self.params = Parameters(_gate_func=_gate_func,
@@ -68,43 +69,106 @@ class CGP:
         :return: None
         """
         # Printing initial Net
-        print("Initial Network\n")
-        self.simulation.net.show_net()
+        print("\nPrinting Net \n")
+        self.simulation.net.show_whole_net()
+        self.simulation.net.show_output()
 
     def load(self, _path):
-        # TODO: Create working load() function
         """
         Method loads saved Net - once evolved scheme
-        :return: None
-        """
-        with open(_path, 'r') as file:
-            size_1d = file.readline()
 
-
-    def save(self, _path=""):
-        # TODO: Create working save() function
-        """
-        Method saves CGP object in a .csv file
-        :param _path: path of the saved file - given by user
+        :param _path: path of .txt json saved file - given by user
         :type _path: str
         :return: None
         """
+
+        print(f"Opening the file...{_path}")
+        with open(_path, 'r') as file:
+
+            data = json.load(file)
+
+        parameters = data['parameters'][0]
+        size_1d = len(data['net']) - parameters['input_length']
+
+        print('Loading Parameters...')
+        self.params = Parameters(_gate_func=parameters['gate_func'],
+                                 _obj_func=[],
+                                 _data=[],
+                                 _input_data_size=parameters['input_length'],
+                                 _size_1d=size_1d,
+                                 _num_copies=parameters['num_copies'],
+                                 _pdb_mutation=parameters['pdb_mutation'],
+                                 )
+
+        self.simulation = Simulation(self.params, _load=True)
+        print('Loading Parameters - completed')
+        print("Loading Net...")
+
+        # net params
+        self.simulation.net.output_gate_index = data['net_params']['output_gate_index']
+        self.simulation.net.output = data['net_params']['output']
+        self.simulation.net.potential = data['net_params']['potential']
+
+        # net
+        for i in range(len(data['net'])):
+            self.simulation.net.net[i].gate_index = data['net'][i]['gate_index']
+            self.simulation.net.net[i].active_input_index = data['net'][i]['active_input_index']
+            self.simulation.net.net[i].active_input_value = data['net'][i]['active_input_value']
+            self.simulation.net.net[i].output_val = data['net'][i]['output_value']
+            self.simulation.net.net[i].gate_func = data['net'][i]['gate_func']
+
+        print("Loading Net - completed")
+        print("Load complete")
+
+    def save(self, _path=""):
+        """
+        Method saves CGP object in a .txt json file
+
+        :param _path: path of the file to be saved - given by user
+        :type _path: str
+        :return: None
+        """
+
         if _path == "":
-            _path = "cgp_evolved_net.csv"
-        with open(_path, 'wb') as file:
-            # write size of Net
-            file.write(bytearray(len(self.simulation.net.net)))
-            file.write(bytearray('\n'))
+            _path = "cgp_evolved_net.txt"
 
-            # write Gates parameters
-            for gate in self.simulation.net.net:
-                file.write(bytearray(str(gate.gate_index) + ',' + str(gate.active_input_index) + ',' +
-                                     str(gate.active_input_value) + ',' + str(gate.output_val) + ',' +
-                                     str(gate.gate_func)))
-                file.write(bytearray('\n'))
+        print(f"Saving evolved Net in {_path}")
 
-            # write Parameters
-            file.write(bytearray(str(self.simulation.params.gate_func) + ',' +
-                                 str(self.simulation.params.input_data_size) + ',' +
-                                 str(self.simulation.params.num_copies) + ',' +
-                                 str(self.simulation.params.pdb_mutation)))
+        data = {'parameters': []}
+        data['parameters'].append({
+            'gate_func': [func.__name__ for func in self.simulation.params.gate_func],
+            'obj_func': self.simulation.params.obj_func.__name__,
+            'input_length': self.simulation.params.input_length,
+            'num_copies': self.simulation.params.num_copies,
+            'pdb_mutation': self.simulation.params.pdb_mutation
+        })
+        data['net'] = []
+
+        for gate in self.simulation.net.net:
+
+            if gate.gate_index < self.simulation.params.input_length:
+                data['net'].append({
+                    'gate_index': gate.gate_index,
+                    'active_input_index': gate.active_input_index,
+                    'active_input_value': gate.active_input_value,
+                    'output_value': gate.output_val,
+                    'gate_func': gate.gate_func,
+                })
+            else:
+                data['net'].append({
+                    'gate_index': gate.gate_index,
+                    'active_input_index': gate.active_input_index,
+                    'active_input_value': gate.active_input_value,
+                    'output_value': gate.output_val,
+                    'gate_func': gate.gate_func.__name__,
+                })
+
+        data['net_params'] = {'output_gate_index': self.simulation.net.output_gate_index,
+                              'output': self.simulation.net.output,
+                              'potential': self.simulation.net.potential
+                              }
+
+        with open(_path, 'w') as file:
+            json.dump(data, file)
+
+        print("Save complete")

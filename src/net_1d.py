@@ -66,7 +66,7 @@ def rnd_gate(stop, start=0):
 class Net1D:
     """Creates a 1D net of gates"""
 
-    def __init__(self, _params):
+    def __init__(self, _params, _load=False):
 
         """
         :param _params: parameters of the simulation
@@ -82,11 +82,14 @@ class Net1D:
         # Net Output
         self.output_gate_index = rnd_gate(self.params.total_size)
         self.output = self.net[self.output_gate_index].output_val
-        self.potential = self.calculate_total_potential()
+        self.potential = 0
 
         # inits
         self.init_gates_links()  # sets initial links
-        self.calculate_all_outputs()  # sets initial output_val in the gates
+
+        if not _load:
+            self.calculate_all_outputs()  # sets initial output_val in the gates
+            self.potential = self.calculate_total_potential()
 
     # Init methods
     def init_gates_links(self):
@@ -108,11 +111,6 @@ class Net1D:
         for gate in self.net[self.params.input_length:]:
             print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + str(gate.gate_func))
 
-    def show_output(self):
-        """Prints output of the Net"""
-
-        print(f'Output gate: {self.output_gate_index}  Output _value: {self.net[self.output_gate_index].output_val}')
-
     def show_whole_net(self):
         """Prints all Gates indexes, gate_func and links"""
 
@@ -122,6 +120,11 @@ class Net1D:
         for gate in self.net[self.params.input_length:]:
             print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: '
                   + str(gate.active_input_index) + '   \t' + str(gate.gate_func))
+
+    def show_output(self):
+        """Prints output of the Net"""
+
+        print(f'Output gate: {self.output_gate_index}  Output _value: {self.net[self.output_gate_index].output_val}')
 
     # Random methods
     def rnd_output_gate(self):

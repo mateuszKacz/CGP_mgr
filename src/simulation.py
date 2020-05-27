@@ -14,7 +14,7 @@ NUM_SIM = 10000
 class Simulation:
     """Main object of the simulation"""
 
-    def __init__(self, _params):
+    def __init__(self, _params, _load=False):
         """
         :param _params: parameters of the simulation
         :type _params: Parameters
@@ -24,7 +24,7 @@ class Simulation:
 
         self.annealing_step = float((self.params.annealing_param-1)/NUM_SIM)
         # initialize first net
-        self.net = Net1D(self.params)
+        self.net = Net1D(self.params, _load=_load)
 
     def multiply_net(self):
         """Method creates n copies of the parent Net."""

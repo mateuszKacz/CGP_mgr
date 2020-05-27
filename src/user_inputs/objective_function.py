@@ -6,6 +6,7 @@
 
 def obj_func(data_input, net_output):
     """Sample user-defined function"""
+
     score = []
     for i in range(len(data_input)):
 

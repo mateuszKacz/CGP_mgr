@@ -16,7 +16,7 @@ def main():
 
     data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
 
-    cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5)
+    cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _load=False)
 
     cgp.start()
 

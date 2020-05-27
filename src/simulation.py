@@ -15,6 +15,10 @@ class Simulation:
     """Main object of the simulation"""
 
     def __init__(self, _params):
+        """
+        :param _params: parameters of the simulation
+        :type _params: Parameters
+        """
 
         self.params = _params
 
@@ -29,21 +33,22 @@ class Simulation:
 
         return copies
 
-    def calc_acceptance_probability(self, new_net_potential, net_potential):
+    def calc_acceptance_probability(self, _new_net_potential, _net_potential):
         """Method calculates probability of acceptance new not optimal state.
-        Function: e(- Beta * delta_E)
+        Function: e(-  delta_E / Beta)
 
-        :param new_net_potential: potential of the mutated (child) Net
-        :type new_net_potential: double
-        :param net_potential: potential of the parent Net
-        :type net_potential: double
+        :param _new_net_potential: potential of the mutated (child) Net
+        :type _new_net_potential: double
+        :param _net_potential: potential of the parent Net
+        :type _net_potential: double
         :return pdb(0,1)
         """
 
-        return exp(-(abs(new_net_potential-net_potential)*10)/self.params.annealing_param)
+        return exp(-(abs(_new_net_potential-_net_potential))/self.params.annealing_param)
 
     def simulate(self):
         """Method runs net mutation on all Gates"""
+
         acc_pdb_data = []
         i = 0
         while self.params.annealing_param >= 0.1:

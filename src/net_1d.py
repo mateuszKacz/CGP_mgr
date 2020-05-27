@@ -68,14 +68,14 @@ def rnd_gate(stop, start=0):
 class Net1D:
     """Creates a 1D net of gates"""
 
-    def __init__(self, params):
+    def __init__(self, _params):
 
         """
-        :param params: parameters of the simulation
-        :type params: Parameters
+        :param _params: parameters of the simulation
+        :type _params: Parameters
         """
 
-        self.params = params
+        self.params = _params
         self.prediction = []
         self.net = [Gate1D(self.params, 'input', i, _value=0) for i in range(self.params.input_length)]
         self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.gate_func), self.params.input_length + i)
@@ -135,33 +135,37 @@ class Net1D:
 
         self.output = self.net[self.output_gate_index].output_val
 
-    def rnd_link_change(self, gate_index):
+    def rnd_link_change(self, _gate_index):
         """Method randomly changes the link fo the chosen Gate.
 
-        :param gate_index: index of the gate in the net to change link in
-        :type gate_index: int
+        :param _gate_index: index of the gate in the net to change link in
+        :type _gate_index: int
         """
         # Atempt to mutate first link
         if rnd.random() <= self.params.pdb_mutation:
-            self.net[gate_index].active_input_index[0] = rnd_gate(gate_index)
+            self.net[_gate_index].active_input_index[0] = rnd_gate(_gate_index)
         # Atempt to mutate second link
         if rnd.random() <= self.params.pdb_mutation:
-            self.net[gate_index].active_input_index[1] = rnd_gate(gate_index)
+            self.net[_gate_index].active_input_index[1] = rnd_gate(_gate_index)
 
     # Update methods
-    def update_gate_value(self, gate_index):
+    def update_gate_value(self, _gate_index):
         """Method updates input values of the Gate and runs operation on it
 
-        :param gate_index: index of the gate in the net to update _value in
-        :type gate_index: int
+        :param _gate_index: index of the gate in the net to update _value in
+        :type _gate_index: int
         """
-        self.net[gate_index].active_input_value[0] = self.net[self.net[gate_index].active_input_index[0]].output_val
-        self.net[gate_index].active_input_value[1] = self.net[self.net[gate_index].active_input_index[1]].output_val
-        self.net[gate_index].run_operation()
+        self.net[_gate_index].active_input_value[0] = self.net[self.net[_gate_index].active_input_index[0]].output_val
+        self.net[_gate_index].active_input_value[1] = self.net[self.net[_gate_index].active_input_index[1]].output_val
+        self.net[_gate_index].run_operation()
 
     # Calculation methods
     def run_data(self, _input_set):
-        """Method takes one input set of data _input_set and it's iterable to extract coresponding output"""
+        """Method takes one input set of data _input_set and it's iterable to extract corresponding output
+
+        :param _input_set: one set of input data (eg. input_gates_num = 5, then len(_input_set) = 5 )
+        :type _input_set: list
+        """
 
         for x in range(self.params.input_length):  # set input values in input gates
             self.net[x].output_val = _input_set[x]

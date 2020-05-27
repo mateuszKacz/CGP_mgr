@@ -4,6 +4,9 @@
 # ---------------------------------------- #
 
 
+"""Set of user-defined sample functions"""
+
+
 def bin_and(data):
 
     if data[0] == 1 and data[1] == 1:

@@ -15,10 +15,10 @@ class Parameters:
         """
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
-        :param _obj_func: function that calculates fitness of the Net
-        :type _obj_func: list
+        :param _obj_func: user-defined method fro Net evaluation
+        :type _obj_func: object
         :param _data: list of values to feed the net
-        :type _data: list
+        :type _data: ndarray
         :param _input_data_size: number of input values to the Net
         :type _input_data_size: int
         :param _size_1d: number of gates to create in the network
@@ -34,6 +34,7 @@ class Parameters:
         # User files
         self.data = _data
         self.gate_func = _gate_func
+        self.obj_func = _obj_func
 
         # Input Data
         self.output = [int(x[_input_data_size]) for x in self.data]

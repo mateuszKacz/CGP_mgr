@@ -16,9 +16,9 @@ class CGP:
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
         :param _obj_func: function that calculates fitness of the Net
-        :type _obj_func: list
+        :type _obj_func: object
         :param _data: list of values to feed the net
-        :type _data: list
+        :type _data: ndarray
         :param _input_data_size: number of input values to the Net
         :type _input_data_size: int
         :param _size_1d: number of gates to create in the network
@@ -71,16 +71,40 @@ class CGP:
         print("Initial Network\n")
         self.simulation.net.show_net()
 
-    def load(self):
+    def load(self, _path):
         # TODO: Create working load() function
         """
         Method loads saved Net - once evolved scheme
         :return: None
         """
+        with open(_path, 'r') as file:
+            size_1d = file.readline()
 
-    def save(self):
+
+    def save(self, _path=""):
         # TODO: Create working save() function
         """
         Method saves CGP object in a .csv file
+        :param _path: path of the saved file - given by user
+        :type _path: str
         :return: None
         """
+        if _path == "":
+            _path = "cgp_evolved_net.csv"
+        with open(_path, 'wb') as file:
+            # write size of Net
+            file.write(bytearray(len(self.simulation.net.net)))
+            file.write(bytearray('\n'))
+
+            # write Gates parameters
+            for gate in self.simulation.net.net:
+                file.write(bytearray(str(gate.gate_index) + ',' + str(gate.active_input_index) + ',' +
+                                     str(gate.active_input_value) + ',' + str(gate.output_val) + ',' +
+                                     str(gate.gate_func)))
+                file.write(bytearray('\n'))
+
+            # write Parameters
+            file.write(bytearray(str(self.simulation.params.gate_func) + ',' +
+                                 str(self.simulation.params.input_data_size) + ',' +
+                                 str(self.simulation.params.num_copies) + ',' +
+                                 str(self.simulation.params.pdb_mutation)))

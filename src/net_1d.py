@@ -4,8 +4,6 @@
 # ---------------------------------------- #
 
 import random as rnd
-import src.user_inputs.objective_function as obj_func
-from src.user_inputs import gate_functions
 
 
 class Gate1D:
@@ -17,7 +15,7 @@ class Gate1D:
         :param _params: parameters of the simulation
         :type _params: Parameters
         :param _gate_func: one of the functions listed in params.gate_func
-        :type _gate_func: func
+        :type _gate_func: object
         :param _gate_index: index of the Gate in Net
         :type _gate_index: int
         :param _value: initial output_val of the Gate
@@ -199,7 +197,7 @@ class Net1D:
         for i in range(len(self.params.data)):
             self.prediction.append(self.run_data(self.params.data[i][:self.params.input_length]))
 
-        self.potential = obj_func.obj_func(self.params.data, self.prediction)
+        self.potential = self.params.obj_func(self.params.data, self.prediction)
         self.output = self.net[self.output_gate_index].output_val  # refreshing param value after calculations
 
         return self.potential

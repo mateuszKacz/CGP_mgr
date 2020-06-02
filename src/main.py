@@ -19,9 +19,11 @@ def main():
     cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _load=False)
 
     cgp.start()
-    cgp.save()
-    cgp.load("cgp_evolved_net.txt")
-    cgp.show_net()
+
+    # saving and loading saved Net
+    # cgp.save()
+    # cgp.load("cgp_evolved_net.txt")
+    # cgp.show_net()
 
 
 if __name__ == "__main__":

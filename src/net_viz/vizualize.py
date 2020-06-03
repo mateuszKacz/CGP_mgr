@@ -17,10 +17,6 @@ def draw_net(_canvas, _box_coords, _center_coords, _entry_coords, _output_coords
     # clear the Canvas
     _canvas.delete(ALL)
 
-    if _i == len(_data['net']):
-        while True:
-            print("Last")
-
     # create boxes
     for coords in _box_coords:
 
@@ -51,10 +47,22 @@ def draw_net(_canvas, _box_coords, _center_coords, _entry_coords, _output_coords
     _i += 1
 
     # next frame
-    _canvas.after(500, draw_net, _canvas, _box_coords, _center_coords, _entry_coords, _output_coords, _data, _i)
+    if _i < len(_data['net']):
+        _canvas.after(500, draw_net, _canvas, _box_coords, _center_coords, _entry_coords, _output_coords, _data, _i)
 
 
 def net_crawl(_canvas, _box_coords, _center_coords, _entry_coords, _output_coords, _net, _params):
+    """
+    This method is a crawler through the Net to find all the gates which form actual solution.
+    :param _canvas: tkinter Canvas object
+    :param _box_coords: coordinates of the boxes to plot (coordinates of the corners to be specific)
+    :param _center_coords: coordinates of the center of the boxes
+    :param _entry_coords: coordinates of the entry point of a connection
+    :param _output_coords: coordinates of the output point of a connection
+    :param _net: Net data from actual step of simulation, json format
+    :param _params: actual parameters of the simulation
+    :return:
+    """
 
     gates = [_params['output_gate_index']]
 
@@ -118,7 +126,7 @@ def main():
     canvas = Canvas(master, width=1000, height=600)
     canvas.pack(fill='both')
 
-    # boxes params
+    # box-grid parameters
     initial_cords = (20, 20, 180, 100)
     rows = 5
     columns = 4

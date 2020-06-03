@@ -47,6 +47,53 @@ class Simulation:
 
         return exp(-(abs(_new_net_potential-_net_potential))/self.params.annealing_param)
 
+    def show_final_solution(self):
+        """
+        Method prints all crucial parameters of the final solution
+        :return: None
+        """
+        print("Final solution")
+        self.net.show_whole_net()
+        self.net.calculate_all_outputs()
+        self.net.show_output()
+        print("Data outputs:")
+        print(self.params.output)
+        print("Net output")
+        print(self.net.prediction)
+        print("Obj function value:")
+        print(self.net.potential)
+
+    def save_data(self, _data_to_viz):
+        """
+        Method saves momentum data of the simulation to _data_to_viz dictionary.
+        :param _data_to_viz: dict
+        :return: None
+        """
+        net = []
+        for gate in self.net.net:
+            if gate.gate_index < self.params.input_length:
+                net.append({
+                    'gate_index': gate.gate_index,
+                    'active_input_index': gate.active_input_index,
+                    'active_input_value': gate.active_input_value,
+                    'output_value': gate.output_val,
+                    'gate_func': gate.gate_func,
+                })
+            else:
+                net.append({
+                    'gate_index': gate.gate_index,
+                    'active_input_index': gate.active_input_index,
+                    'active_input_value': gate.active_input_value,
+                    'output_value': gate.output_val,
+                    'gate_func': gate.gate_func.__name__,
+                })
+        _data_to_viz['net'].append(net)
+        _data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
+                                       'output': self.net.output,
+                                       'potential': self.net.potential,
+                                       'temperature': self.params.annealing_param
+                                       })
+
     def simulate(self):
         """Method runs net mutation on all Gates"""
 
@@ -78,88 +125,24 @@ class Simulation:
 
             # export local state of the net
             if i % 10 == 0:
-                net = []
-                for gate in self.net.net:
-                    if gate.gate_index < self.params.input_length:
-                        net.append({
-                                    'gate_index': gate.gate_index,
-                                    'active_input_index': gate.active_input_index,
-                                    'active_input_value': gate.active_input_value,
-                                    'output_value': gate.output_val,
-                                    'gate_func': gate.gate_func,
-                                })
-                    else:
-                        net.append({
-                                    'gate_index': gate.gate_index,
-                                    'active_input_index': gate.active_input_index,
-                                    'active_input_value': gate.active_input_value,
-                                    'output_value': gate.output_val,
-                                    'gate_func': gate.gate_func.__name__,
-                                })
-                data_to_viz['net'].append(net)
-                data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
-                                              'output': self.net.output,
-                                              'potential': self.net.potential,
-                                              'temperature': self.params.annealing_param
-                                              })
+                self.save_data(data_to_viz)
 
             # print control params
             if i % 200 == 0:
                 print(f'Sim iter: {i}')
                 print('Obj func: {:.3f} \t Annealing param value: {:.2f}'.format(self.net.potential, self.params.annealing_param))
 
-            # end simulation
+            # simulation's end conditions
             if i % NUM_SIM == 0:  # quit if initial number of simulation steps is reached
-                print("Final solution")
-                self.net.show_whole_net()
-                self.net.calculate_all_outputs()
-                self.net.show_output()
-                print("Data outputs:")
-                print(self.params.output)
-                print("Net output")
-                print(self.net.prediction)
-                print("Obj function value:")
-                print(self.net.potential)
+                self.show_final_solution()
                 break
 
             if self.net.potential == 0.:
-                print("Final solution")
-                self.net.show_whole_net()
-                self.net.calculate_all_outputs()
-                self.net.show_output()
-                print("Data outputs:")
-                print(self.params.output)
-                print("Net output")
-                print(self.net.prediction)
-                print("Obj function value:")
-                print(self.net.potential)
+                self.show_final_solution()
                 break
 
         # save final state
-        net = []
-        for gate in self.net.net:
-            if gate.gate_index < self.params.input_length:
-                net.append({
-                    'gate_index': gate.gate_index,
-                    'active_input_index': gate.active_input_index,
-                    'active_input_value': gate.active_input_value,
-                    'output_value': gate.output_val,
-                    'gate_func': gate.gate_func,
-                })
-            else:
-                net.append({
-                    'gate_index': gate.gate_index,
-                    'active_input_index': gate.active_input_index,
-                    'active_input_value': gate.active_input_value,
-                    'output_value': gate.output_val,
-                    'gate_func': gate.gate_func.__name__,
-                })
-        data_to_viz['net'].append(net)
-        data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
-                                      'output': self.net.output,
-                                      'potential': self.net.potential,
-                                      'temperature': self.params.annealing_param
-                                      })
+        self.save_data(data_to_viz)
 
         with open("net_viz/viz_data.txt", 'w') as file:
             json.dump(data_to_viz, file)

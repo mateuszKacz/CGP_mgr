@@ -55,31 +55,6 @@ class Simulation:
         i = 0
         while self.params.annealing_param >= 0.1:
 
-            # export local state of the net
-            net = []
-            for gate in self.net.net:
-                if gate.gate_index < self.params.input_length:
-                    net.append({
-                        'gate_index': gate.gate_index,
-                        'active_input_index': gate.active_input_index,
-                        'active_input_value': gate.active_input_value,
-                        'output_value': gate.output_val,
-                        'gate_func': gate.gate_func,
-                    })
-                else:
-                    net.append({
-                        'gate_index': gate.gate_index,
-                        'active_input_index': gate.active_input_index,
-                        'active_input_value': gate.active_input_value,
-                        'output_value': gate.output_val,
-                        'gate_func': gate.gate_func.__name__,
-                    })
-            data_to_viz['net'].append(net)
-            data_to_viz['params'] = {'output_gate_index': self.net.output_gate_index,
-                                     'output': self.net.output,
-                                     'potential': self.net.potential
-                                     }
-
             i += 1  # simulation iterator
             self.params.annealing_param -= self.annealing_step
 
@@ -100,6 +75,33 @@ class Simulation:
 
                 if random() <= acc_pdb:
                     self.net = copies[best_copy_index]
+
+            # export local state of the net
+            if i % 10 == 0:
+                net = []
+                for gate in self.net.net:
+                    if gate.gate_index < self.params.input_length:
+                        net.append({
+                                    'gate_index': gate.gate_index,
+                                    'active_input_index': gate.active_input_index,
+                                    'active_input_value': gate.active_input_value,
+                                    'output_value': gate.output_val,
+                                    'gate_func': gate.gate_func,
+                                })
+                    else:
+                        net.append({
+                                    'gate_index': gate.gate_index,
+                                    'active_input_index': gate.active_input_index,
+                                    'active_input_value': gate.active_input_value,
+                                    'output_value': gate.output_val,
+                                    'gate_func': gate.gate_func.__name__,
+                                })
+                data_to_viz['net'].append(net)
+                data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
+                                              'output': self.net.output,
+                                              'potential': self.net.potential,
+                                              'temperature': self.params.annealing_param
+                                              })
 
             # print control params
             if i % 200 == 0:
@@ -132,6 +134,32 @@ class Simulation:
                 print("Obj function value:")
                 print(self.net.potential)
                 break
+
+        # save final state
+        net = []
+        for gate in self.net.net:
+            if gate.gate_index < self.params.input_length:
+                net.append({
+                    'gate_index': gate.gate_index,
+                    'active_input_index': gate.active_input_index,
+                    'active_input_value': gate.active_input_value,
+                    'output_value': gate.output_val,
+                    'gate_func': gate.gate_func,
+                })
+            else:
+                net.append({
+                    'gate_index': gate.gate_index,
+                    'active_input_index': gate.active_input_index,
+                    'active_input_value': gate.active_input_value,
+                    'output_value': gate.output_val,
+                    'gate_func': gate.gate_func.__name__,
+                })
+        data_to_viz['net'].append(net)
+        data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
+                                      'output': self.net.output,
+                                      'potential': self.net.potential,
+                                      'temperature': self.params.annealing_param
+                                      })
 
         with open("net_viz/viz_data.txt", 'w') as file:
             json.dump(data_to_viz, file)

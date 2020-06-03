@@ -1,5 +1,5 @@
 #
-#   Class contains main parameteters
+#   Class contains main parameters
 #   and initial values
 # ---------------------------------------- #
 

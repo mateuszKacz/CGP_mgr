@@ -1,3 +1,8 @@
+#
+#   Script creates graphical simulation
+#   of CGP
+# ---------------------------------------- #
+
 import json
 from tkinter import Tk, Canvas, ALL
 

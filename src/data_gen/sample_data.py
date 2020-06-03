@@ -1,4 +1,4 @@
-#   Data Gen generation script
+#   data_gen generation script
 #   this is sample data normally
 #   user should prepare give data file
 # ---------------------------------------- #

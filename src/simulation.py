@@ -99,10 +99,10 @@ class Simulation:
 
         data_to_viz = {'params': [], 'net': []}
 
-        i = 0
+        self.i = 0
         while self.params.annealing_param >= 0.1:
 
-            i += 1  # simulation iterator
+            self.i += 1  # simulation iterator
             self.params.annealing_param -= self.annealing_step
 
             potentials = []
@@ -124,16 +124,16 @@ class Simulation:
                     self.net = copies[best_copy_index]
 
             # export local state of the net
-            if i % 10 == 0:
+            if self.i % 10 == 0:
                 self.save_data(data_to_viz)
 
             # print control params
-            if i % 200 == 0:
-                print(f'Sim iter: {i}')
+            if self.i % 200 == 0:
+                print(f'Sim iter: {self.i}')
                 print('Obj func: {:.3f} \t Annealing param value: {:.2f}'.format(self.net.potential, self.params.annealing_param))
 
             # simulation's end conditions
-            if i % NUM_SIM == 0:  # quit if initial number of simulation steps is reached
+            if self.i % NUM_SIM == 0:  # quit if initial number of simulation steps is reached
                 self.show_final_solution()
                 break
 
@@ -142,9 +142,9 @@ class Simulation:
                 break
 
         # save final state
-        self.save_data(data_to_viz)
-
-        with open("net_viz/viz_data.txt", 'w') as file:
-            json.dump(data_to_viz, file)
-
-        print("Data to viz save complete")
+        # self.save_data(data_to_viz)
+        #
+        # with open("net_viz/viz_data.txt", 'w') as file:
+        #     json.dump(data_to_viz, file)
+        #
+        # print("Data to viz save complete")

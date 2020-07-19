@@ -21,6 +21,7 @@ class Simulation:
 
         self.params = _params
         self.i = 0
+        self.sim_end = False
 
         # initialize first net
         self.net = Net1D(self.params, _load=_load)
@@ -147,6 +148,7 @@ class Simulation:
                 self.show_final_solution()
                 break
 
+        self.sim_end = True
         # save final state
         # self.save_data(data_to_viz)
         #

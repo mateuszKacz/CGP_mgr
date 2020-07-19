@@ -8,8 +8,8 @@ from src.simulation import Simulation
 import json
 
 
-class CGP:
-    """Main CGP-algorithm object which is initialized by the User."""
+class CGPSA:
+    """Main Cartesian Genetic Programming with Simulated Annealing algorithm object initialized by the User"""
 
     def __init__(self, _gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
                  _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load=False):

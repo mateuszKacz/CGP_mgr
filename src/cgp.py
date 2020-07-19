@@ -12,7 +12,7 @@ class CGP:
     """Main CGP-algorithm object which is initialized by the User."""
 
     def __init__(self, _gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
-                 _pdb_mutation=0.06, _annealing_param=100, _load=False):
+                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load=False):
         """
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
@@ -30,10 +30,17 @@ class CGP:
         :type _pdb_mutation: float
         :param _annealing_param: control parameter which is a representation of cooling (simulated anealing)
         :type _annealing_param: float
+        :param _annealing_scheme: parameter defines the scheme of annealing_param's reduction; one of
+        ['geom', 'linear', 'log']. In 'geom' the next argument is also 'a' parameter, so it would look like ['geom', 0.9]
+        :type _annealing_scheme: list
+        :param _steps: number of steps of the simulation
+        :type _steps: int
         :param _load: flag that indicates in CGP object should be read from saved .csv file
         :type _load: bool
         """
 
+        if _annealing_scheme is None:
+            _annealing_scheme = ['geom', 0.7]
         if _load:
             self.load("cgp_evolved_net.txt")
         else:
@@ -45,7 +52,9 @@ class CGP:
                                      _size_1d=_size_1d,
                                      _num_copies=_num_copies,
                                      _pdb_mutation=_pdb_mutation,
-                                     _annealing_param=_annealing_param)
+                                     _annealing_param_init_value=_annealing_param,
+                                     _annealing_scheme=_annealing_scheme,
+                                     _steps=_steps)
 
             print("Creating Simulation components...")
             self.simulation = Simulation(self.params)
@@ -98,6 +107,8 @@ class CGP:
                                  _size_1d=size_1d,
                                  _num_copies=parameters['num_copies'],
                                  _pdb_mutation=parameters['pdb_mutation'],
+                                 _annealing_scheme=parameters['annealing_scheme'],
+                                 _steps=parameters['steps']
                                  )
 
         self.simulation = Simulation(self.params, _load=True)
@@ -165,7 +176,9 @@ class CGP:
 
         data['net_params'] = {'output_gate_index': self.simulation.net.output_gate_index,
                               'output': self.simulation.net.output,
-                              'potential': self.simulation.net.potential
+                              'potential': self.simulation.net.potential,
+                              'annealing_scheme': self.params.annealing_scheme,
+                              'steps': self.params.steps
                               }
 
         with open(_path, 'w') as file:

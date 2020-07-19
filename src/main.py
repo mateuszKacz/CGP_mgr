@@ -9,6 +9,8 @@ from src.cgp import CGP
 from numpy import genfromtxt
 import pandas as pd
 
+# TODO: automatize data gathering process
+
 
 def main():
     """Main function"""
@@ -34,7 +36,8 @@ def main():
     # cgp.load("cgp_evolved_net.txt")
     # cgp.show_net()
 
-    cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _load=False)
+    cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
+              _annealing_scheme=['geom', 0.99], _steps=1000, _load=False)
     cgp.start()
 
 

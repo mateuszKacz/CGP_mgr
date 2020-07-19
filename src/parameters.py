@@ -5,13 +5,15 @@
 
 from numpy import genfromtxt
 import src.user_inputs.gate_functions as gate_functions
+import numpy as np
+from math import log
 
 
 class Parameters:
     """Class contains main initial values and parameters of the simulation"""
 
     def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d, _num_copies, _pdb_mutation=0.03,
-                 _annealing_param=100):
+                 _annealing_param_init_value=100, _annealing_scheme=None, _steps=10000):
         """
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
@@ -27,11 +29,17 @@ class Parameters:
         :type _num_copies: int
         :param _pdb_mutation: Probability of mutation (link change, operation change, output gate change)
         :type _pdb_mutation: float
-        :param _annealing_param: control parameter which is a representation of cooling (simulated anealing)
-        :type _annealing_param: float
+        :param _annealing_param_init_value: control parameter which is a representation of cooling (simulated anealing)
+        :type _annealing_param_init_value: float
+        :param _annealing_scheme: parameter defines the scheme of annealing_param's reduction; one of ['geom', 'linear', 'log']
+        :type _annealing_scheme: list
+        :param _steps: number of steps of the simulation
+        :type _steps: int
         """
 
         # User files
+        if _annealing_scheme is None:
+            _annealing_scheme = ['geom', 0.95]
         self.data = _data
         self.gate_func = _gate_func
         self.obj_func = _obj_func
@@ -49,6 +57,28 @@ class Parameters:
 
         # Other parameters
         self.num_copies = _num_copies  # number of Net copies created every step of the mutation
+        self.steps = _steps
 
         # Annealing parameter
-        self.annealing_param = _annealing_param
+        self.annealing_param_init_value = _annealing_param_init_value
+        self.annealing_scheme = _annealing_scheme
+        self.annealing_param_values = self.calc_annealing_param_values()
+
+    def calc_annealing_param_values(self):
+        """
+        Method calculates set of annealing parameter's values following chosen scheme from ['geom', 'linear', 'log']
+        For 'geom' we have additional parameter 'a'
+        :return: ndarray
+        """
+
+        if self.annealing_scheme[0] is 'geom':
+            _annealing_param_values = [self.annealing_param_init_value*(self.annealing_scheme[1] ** k) for k in
+                                       range(self.steps)]
+        elif self.annealing_scheme[0] is 'linear':
+            _annealing_param_values = [self.annealing_param_init_value/k for k in range(self.steps)]
+        elif self.annealing_scheme[0] is 'log':
+            _annealing_param_values = [self.annealing_param_init_value/(1 + log(k)) for k in range(1, self.steps + 1)]
+        else:
+            raise ValueError("Wrong annealing scheme...choose one from ['geom','linear', 'log']")
+        print(len(_annealing_param_values))
+        return np.array(_annealing_param_values, dtype='float')

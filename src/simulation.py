@@ -9,8 +9,6 @@ from random import random
 from src.net_1d import Net1D
 import json
 
-NUM_SIM = 10000
-
 
 class Simulation:
     """Main object of the simulation"""
@@ -22,8 +20,8 @@ class Simulation:
         """
 
         self.params = _params
+        self.i = 0
 
-        self.annealing_step = float((self.params.annealing_param-1)/NUM_SIM)
         # initialize first net
         self.net = Net1D(self.params, _load=_load)
 
@@ -45,13 +43,14 @@ class Simulation:
         :return pdb(0,1)
         """
 
-        return exp(-(abs(_new_net_potential-_net_potential))/self.params.annealing_param)
+        return exp(-(abs(_new_net_potential-_net_potential))/self.params.annealing_param_values[self.i])
 
     def show_final_solution(self):
         """
         Method prints all crucial parameters of the final solution
         :return: None
         """
+
         print("Final solution")
         self.net.show_whole_net()
         self.net.calculate_all_outputs()
@@ -62,6 +61,16 @@ class Simulation:
         print(self.net.prediction)
         print("Obj function value:")
         print(self.net.potential)
+
+    def show_control_params(self):
+        """
+        Method prints control parameters of current iteration
+        :return: None
+        """
+
+        print(f'Sim iter: {self.i}')
+        print('Obj func: {:.3f} \t Annealing param value: {:.2f}'.format(self.net.potential,
+                                                                         self.params.annealing_param_values[self.i]))
 
     def save_data(self, _data_to_viz):
         """
@@ -91,7 +100,7 @@ class Simulation:
         _data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
                                        'output': self.net.output,
                                        'potential': self.net.potential,
-                                       'temperature': self.params.annealing_param
+                                       'temperature': self.params.annealing_param_values[self.i]
                                        })
 
     def simulate(self):
@@ -99,11 +108,9 @@ class Simulation:
 
         data_to_viz = {'params': [], 'net': []}
 
-        self.i = 0
-        while self.params.annealing_param >= 0.1:
+        while self.params.annealing_param_values[self.i] > 0.:
 
             self.i += 1  # simulation iterator
-            self.params.annealing_param -= self.annealing_step
 
             potentials = []
             copies = self.multiply_net()  # makes n_copies of Net
@@ -129,11 +136,10 @@ class Simulation:
 
             # print control params
             if self.i % 200 == 0:
-                print(f'Sim iter: {self.i}')
-                print('Obj func: {:.3f} \t Annealing param value: {:.2f}'.format(self.net.potential, self.params.annealing_param))
+                self.show_control_params()
 
             # simulation's end conditions
-            if self.i % NUM_SIM == 0:  # quit if initial number of simulation steps is reached
+            if self.i % (self.params.steps - 1) == 0:  # quit if initial number of simulation steps is reached
                 self.show_final_solution()
                 break
 

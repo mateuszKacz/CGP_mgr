@@ -31,15 +31,15 @@ class Parameters:
         :type _pdb_mutation: float
         :param _annealing_param_init_value: control parameter which is a representation of cooling (simulated anealing)
         :type _annealing_param_init_value: float
-        :param _annealing_scheme: parameter defines the scheme of annealing_param's reduction; one of ['geom', 'linear', 'log']
+        :param _annealing_scheme: parameter defines the scheme of annealing_param's reduction; one of
+        ['geom', 'linear', 'log']. In 'geom' the next argument is also 'a' parameter, so it would look like ['geom', 0.9]
+        if None, then Simulated Annealing is not performed.
         :type _annealing_scheme: list
         :param _steps: number of steps of the simulation
         :type _steps: int
         """
 
         # User files
-        if _annealing_scheme is None:
-            _annealing_scheme = ['geom', 0.95]
         self.data = _data
         self.gate_func = _gate_func
         self.obj_func = _obj_func
@@ -52,8 +52,8 @@ class Parameters:
 
         # 1D Net Params
         self.size_1d = _size_1d  # number of calculating Gates in the Net
-        self.input_length = _input_data_size  # number of input Gates
-        self.total_size = self.size_1d + self.input_length  # total number of Gates in the Net (including input Gates)
+        self.input_data_size = _input_data_size  # number of input Gates
+        self.total_size = self.size_1d + self.input_data_size  # total number of Gates in the Net(including input Gates)
 
         # Other parameters
         self.num_copies = _num_copies  # number of Net copies created every step of the mutation
@@ -67,18 +67,25 @@ class Parameters:
     def calc_annealing_param_values(self):
         """
         Method calculates set of annealing parameter's values following chosen scheme from ['geom', 'linear', 'log']
-        For 'geom' we have additional parameter 'a'
+        For 'geom' we have additional parameter 'a' [0,1] which shapes the slope of the geometric curve.
+
         :return: ndarray
         """
 
         if self.annealing_scheme[0] is 'geom':
             _annealing_param_values = [self.annealing_param_init_value*(self.annealing_scheme[1] ** k) for k in
                                        range(self.steps)]
+
         elif self.annealing_scheme[0] is 'linear':
             _annealing_param_values = [self.annealing_param_init_value/k for k in range(self.steps)]
+
         elif self.annealing_scheme[0] is 'log':
-            _annealing_param_values = [self.annealing_param_init_value/(1 + log(k)) for k in range(1, self.steps + 1)]
+            _annealing_param_values = [self.annealing_param_init_value/(1 + log(k + 1)) for k in range(self.steps)]
+
+        elif self.annealing_scheme is None:
+            _annealing_param_values = [self.annealing_param_init_value for k in range(self.steps)]
+
         else:
             raise ValueError("Wrong annealing scheme...choose one from ['geom','linear', 'log']")
-        print(len(_annealing_param_values))
+
         return np.array(_annealing_param_values, dtype='float')

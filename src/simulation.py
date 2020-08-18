@@ -49,6 +49,7 @@ class Simulation:
     def show_final_solution(self):
         """
         Method prints all crucial parameters of the final solution
+
         :return: None
         """
 
@@ -66,6 +67,7 @@ class Simulation:
     def show_control_params(self):
         """
         Method prints control parameters of current iteration
+
         :return: None
         """
 
@@ -76,12 +78,13 @@ class Simulation:
     def save_data(self, _data_to_viz):
         """
         Method saves momentum data of the simulation to _data_to_viz dictionary.
+
         :param _data_to_viz: dict
         :return: None
         """
         net = []
         for gate in self.net.net:
-            if gate.gate_index < self.params.input_length:
+            if gate.gate_index < self.params.input_data_size:
                 net.append({
                     'gate_index': gate.gate_index,
                     'active_input_index': gate.active_input_index,
@@ -103,6 +106,20 @@ class Simulation:
                                        'potential': self.net.potential,
                                        'temperature': self.params.annealing_param_values[self.i]
                                        })
+
+    def dump_data(self, data, path):
+        """
+        Method dumps simulation data to json file
+
+        :param data: data in dictionary
+        :param path: path of the file to save
+        :return: None
+        """
+
+        with open(path, 'w') as file:
+            json.dump(data, file)
+
+        print("Data to viz save complete")
 
     def simulate(self):
         """Method runs net mutation on all Gates"""
@@ -142,17 +159,15 @@ class Simulation:
             # simulation's end conditions
             if self.i % (self.params.steps - 1) == 0:  # quit if initial number of simulation steps is reached
                 self.show_final_solution()
+                self.save_data(data_to_viz)
                 break
 
             if self.net.potential == 0.:
                 self.show_final_solution()
+                self.save_data(data_to_viz)
                 break
 
         self.sim_end = True
-        # save final state
-        # self.save_data(data_to_viz)
-        #
-        # with open("net_viz/viz_data.txt", 'w') as file:
-        #     json.dump(data_to_viz, file)
-        #
-        # print("Data to viz save complete")
+
+        # Dump simulation data to json file
+        # self.dump_data(data_to_viz, "net_viz/viz_data.txt")

@@ -5,11 +5,11 @@
 
 import src.user_inputs.objective_function as obj_func
 import src.user_inputs.gate_functions as gate_func
-from src.cgpsa import CGPSA
 from numpy import genfromtxt
+import src.data_gather.data_gathering_automat as data_gather
 import pandas as pd
 
-# TODO: automatize data gathering process
+# TODO: gather data - SA
 # TODO: implement Parallel Tempering algorithm
 
 
@@ -19,27 +19,16 @@ def main():
     gate_fun = [gate_func.bin_and, gate_func.bin_nand, gate_func.bin_or, gate_func.bin_xor]
 
     data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
+    #
+    # cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
+    #             _annealing_scheme=['geom', 0.99], _steps=1000, _load=False)
+    # cgpsa.start()
 
-    # gather_data = []
+    data = data_gather.gen_cgp_data(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
+                                    _size_1d=15, _num_copies=5, _pdb_mutation=0.06, _annealing_param=100,
+                                    _annealing_scheme=['geom', 0.99], _steps=5000, _load=False, _num_of_sim=100)
 
-    # for i in range(150):
-    #
-    #     cgp = CGP(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _load=False)
-    #
-    #     cgp.start()
-    #
-    #     gather_data.append({'potential': cgp.simulation.net.potential, 'iteration': cgp.simulation.i})
-    #
-    # to_export = pd.DataFrame(gather_data)
-    # to_export.to_csv("control_params")
-    # saving and loading saved Net
-    # cgp.save()
-    # cgp.load("cgp_evolved_net.txt")
-    # cgp.show_net()
-
-    cgp = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
-                _annealing_scheme=['geom', 0.99], _steps=1000, _load=False)
-    cgp.start()
+    data_gather.save_to_csv(data, "cgpsa_geom99_5000steps_numsim100_numcopies5_annealing100.csv", _new_dir='cgpsa')
 
 
 if __name__ == "__main__":

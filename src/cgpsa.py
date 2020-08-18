@@ -31,7 +31,9 @@ class CGPSA:
         :param _annealing_param: control parameter which is a representation of cooling (simulated anealing)
         :type _annealing_param: float
         :param _annealing_scheme: parameter defines the scheme of annealing_param's reduction; one of
-        ['geom', 'linear', 'log']. In 'geom' the next argument is also 'a' parameter, so it would look like ['geom', 0.9]
+            ['geom', 'linear', 'log']. In 'geom' the next argument is also 'a' parameter, so it would look like
+            ['geom', 0.9] if None, then Simulated Annealing is not performed and the annealing_param is constant during
+            the simulation.
         :type _annealing_scheme: list
         :param _steps: number of steps of the simulation
         :type _steps: int
@@ -39,8 +41,6 @@ class CGPSA:
         :type _load: bool
         """
 
-        if _annealing_scheme is None:
-            _annealing_scheme = ['geom', 0.7]
         if _load:
             self.load("cgp_evolved_net.txt")
         else:
@@ -97,13 +97,13 @@ class CGPSA:
             data = json.load(file)
 
         parameters = data['parameters'][0]
-        size_1d = len(data['net']) - parameters['input_length']
+        size_1d = len(data['net']) - parameters['input_data_size']
 
         print('Loading Parameters...')
         self.params = Parameters(_gate_func=parameters['gate_func'],
                                  _obj_func=[],
                                  _data=[],
-                                 _input_data_size=parameters['input_length'],
+                                 _input_data_size=parameters['input_data_size'],
                                  _size_1d=size_1d,
                                  _num_copies=parameters['num_copies'],
                                  _pdb_mutation=parameters['pdb_mutation'],
@@ -149,7 +149,7 @@ class CGPSA:
         data['parameters'].append({
             'gate_func': [func.__name__ for func in self.simulation.params.gate_func],
             'obj_func': self.simulation.params.obj_func.__name__,
-            'input_length': self.simulation.params.input_length,
+            'input_data_size': self.simulation.params.input_length,
             'num_copies': self.simulation.params.num_copies,
             'pdb_mutation': self.simulation.params.pdb_mutation
         })

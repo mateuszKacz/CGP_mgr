@@ -75,8 +75,8 @@ class Net1D:
 
         self.params = _params
         self.prediction = []
-        self.net = [Gate1D(self.params, 'input', i, _value=0) for i in range(self.params.input_length)]
-        self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.gate_func), self.params.input_length + i)
+        self.net = [Gate1D(self.params, 'input', i, _value=0) for i in range(self.params.input_data_size)]
+        self.net = self.net + [Gate1D(self.params, rnd.choice(self.params.gate_func), self.params.input_data_size + i)
                                for i in range(self.params.size_1d)]
 
         # Net Output
@@ -95,7 +95,7 @@ class Net1D:
     def init_gates_links(self):
         """Method randomly initiates gates' input links"""
 
-        for gate_index in range(self.params.input_length, len(self.net)):
+        for gate_index in range(self.params.input_data_size, len(self.net)):
             for link in range(2):
                 rand_gate = rnd_gate(gate_index)
                 self.net[gate_index].active_input_index[link] = rand_gate
@@ -114,10 +114,10 @@ class Net1D:
     def show_whole_net(self):
         """Prints all Gates indexes, gate_func and links"""
 
-        for gate in self.net[:self.params.input_length]:
+        for gate in self.net[:self.params.input_data_size]:
             print(str(gate.gate_index) + '\t' + str(gate.output_val) + '\t' + str(gate.gate_func))
 
-        for gate in self.net[self.params.input_length:]:
+        for gate in self.net[self.params.input_data_size:]:
             print('Gate: ' + str(gate.gate_index) + '   \t' + 'Output: ' + str(gate.output_val) + '   \t' + 'InIndex: '
                   + str(gate.active_input_index) + '   \t' + str(gate.gate_func))
 
@@ -168,7 +168,7 @@ class Net1D:
         :type _input_set: list
         """
 
-        for x in range(self.params.input_length):  # set input values in input gates
+        for x in range(self.params.input_data_size):  # set input values in input gates
             self.net[x].output_val = _input_set[x]
 
         self.calculate_all_outputs()
@@ -178,14 +178,14 @@ class Net1D:
     def calculate_all_outputs(self):
         """Method recalculates all values in gates - all net"""
 
-        for gate_index in range(self.params.input_length, self.params.total_size):
+        for gate_index in range(self.params.input_data_size, self.params.total_size):
 
             self.update_gate_value(gate_index)
 
     def mutate(self):
         """Method tries to mutate every gate from the Net - it's operation and links with probability"""
 
-        for gate_index in range(self.params.input_length, self.params.total_size):
+        for gate_index in range(self.params.input_data_size, self.params.total_size):
             self.rnd_link_change(gate_index)  # attempt to change the links and recalc if needed
             self.net[gate_index].change_operation()  # attempt to change the operation and recalc output if needed
             self.rnd_output_gate()  # attempt to change output gate and sets new output if needed
@@ -198,7 +198,7 @@ class Net1D:
 
         # Calculates differences between outputs in all data sets
         for i in range(len(self.params.data)):
-            self.prediction.append(self.run_data(self.params.data[i][:self.params.input_length]))
+            self.prediction.append(self.run_data(self.params.data[i][:self.params.input_data_size]))
 
         self.potential = self.params.obj_func(self.params.data, self.prediction)
         self.output = self.net[self.output_gate_index].output_val  # refreshing param value after calculations

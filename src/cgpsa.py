@@ -12,7 +12,7 @@ class CGPSA:
     """Main Cartesian Genetic Programming with Simulated Annealing algorithm object initialized by the User"""
 
     def __init__(self, _gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
-                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load=False):
+                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False):
         """
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
@@ -37,12 +37,12 @@ class CGPSA:
         :type _annealing_scheme: list
         :param _steps: number of steps of the simulation
         :type _steps: int
-        :param _load: flag that indicates in CGP object should be read from saved .csv file
-        :type _load: bool
+        :param _load_file: flag that indicates in CGP object should be read from saved .csv file
         """
 
-        if _load:
-            self.load("cgp_evolved_net.txt")
+        if _load_file:
+            self.load_file = _load_file
+            self.load(_load_file)
         else:
             print("Setting Parameters...")
             self.params = Parameters(_gate_func=_gate_func,
@@ -87,7 +87,6 @@ class CGPSA:
         Method loads saved Net - once evolved scheme
 
         :param _path: path of .txt json saved file - given by user
-        :type _path: str
         :return: None
         """
 
@@ -111,14 +110,14 @@ class CGPSA:
                                  _steps=parameters['steps']
                                  )
 
-        self.simulation = Simulation(self.params, _load=True)
+        self.simulation = Simulation(self.params, _load_file=self.load_file)
         print('Loading Parameters - completed')
         print("Loading Net...")
 
         # net params
-        self.simulation.net.output_gate_index = data['net_params']['output_gate_index']
-        self.simulation.net.output = data['net_params']['output']
-        self.simulation.net.potential = data['net_params']['potential']
+        self.simulation.net.output_gate_index = parameters['output_gate_index']
+        self.simulation.net.output = parameters['output']
+        self.simulation.net.potential = parameters['potential']
 
         # net
         for i in range(len(data['net'])):
@@ -149,15 +148,20 @@ class CGPSA:
         data['parameters'].append({
             'gate_func': [func.__name__ for func in self.simulation.params.gate_func],
             'obj_func': self.simulation.params.obj_func.__name__,
-            'input_data_size': self.simulation.params.input_length,
+            'input_data_size': self.simulation.params.input_data_size,
             'num_copies': self.simulation.params.num_copies,
-            'pdb_mutation': self.simulation.params.pdb_mutation
+            'pdb_mutation': self.simulation.params.pdb_mutation,
+            'annealing_scheme': self.params.annealing_scheme,
+            'potential': self.simulation.net.potential,
+            'output_gate_index': self.simulation.net.output_gate_index,
+            'output': self.simulation.net.output,
+            'steps': self.params.steps
         })
         data['net'] = []
 
         for gate in self.simulation.net.net:
 
-            if gate.gate_index < self.simulation.params.input_length:
+            if gate.gate_index < self.simulation.params.input_data_size:
                 data['net'].append({
                     'gate_index': gate.gate_index,
                     'active_input_index': gate.active_input_index,
@@ -173,13 +177,6 @@ class CGPSA:
                     'output_value': gate.output_val,
                     'gate_func': gate.gate_func.__name__,
                 })
-
-        data['net_params'] = {'output_gate_index': self.simulation.net.output_gate_index,
-                              'output': self.simulation.net.output,
-                              'potential': self.simulation.net.potential,
-                              'annealing_scheme': self.params.annealing_scheme,
-                              'steps': self.params.steps
-                              }
 
         with open(_path, 'w') as file:
             json.dump(data, file)

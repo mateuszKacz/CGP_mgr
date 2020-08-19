@@ -6,13 +6,14 @@
 import pandas as pd
 from os import chdir, mkdir
 import pathlib
-from src.cgpsa import CGPSA
+#from src.cgpsa import CGPSA
 from multiprocessing import Pool
+import json
 
 
 # TODO: add multi threading
 def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
-                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load=False,
+                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
                  _num_of_sim=10):
     """
     Function takes CGPSA parameters with some additional variables and perform numerous simulations of CGPSA algorithm.
@@ -38,8 +39,8 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
         if None, then Simulated Annealing is not performed and the annealing_param is constant during the simulation.
     :param _steps: number of steps of the simulation
     :type _steps: int
-    :param _load: flag that indicates in CGP object should be read from saved .csv file
-    :type _load: bool
+    :param _load_file: name of the file containing saved Net configuration
+    :type _load_file: str
     :param _num_of_sim: number of CGP simulations to perform for the data gathering process
     :type _num_of_sim: int
     :return: list
@@ -51,7 +52,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
         cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
                       _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
                       _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
-                      _load=_load)
+                      _load_file=_load_file)
 
         cgpsa.start()
 
@@ -61,9 +62,9 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
     # with Pool(processes=2) as pool:
     #
-    #     multiprocess = [pool.apply_async(cgp_run, (_gate_func, _obj_func, _data, _input_data_size, _size_1d,
-    #                                                _num_copies, _pdb_mutation, _annealing_param, _annealing_scheme,
-    #                                                _steps, _load, gathered_data)) for x in range(10)]
+    #     multiprocess = [pool.apply_async(cgp_run, kwgs=(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
+    #         _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=_load_file, _num_of_sim=10,
+    #         _gathered_data=None)) for x in range(10)]
     #     print([res.get(timeout=1) for res in multiprocess])
     #
     #     pool.join()
@@ -74,13 +75,13 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
 
 def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
-            _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load=False, _num_of_sim=10,
-            _gathered_data=None):
+            _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
+            _num_of_sim=10, _gathered_data=None):
 
     cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
                   _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
                   _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
-                  _load=_load)
+                  _load_file=_load_file)
 
     cgpsa.start()
 
@@ -126,3 +127,18 @@ def save_to_csv(_data, _filename, _new_dir=None):
 
     except NotADirectoryError as err:
         print(err)
+
+
+def dump_data(data, path):
+    """
+    Method dumps simulation data to json file
+
+    :param data: data in dictionary
+    :param path: path of the file to save
+    :return: None
+    """
+
+    with open(path, 'w') as file:
+        json.dump(data, file)
+
+    print("Data to viz save complete")

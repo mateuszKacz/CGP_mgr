@@ -7,24 +7,25 @@ from copy import deepcopy
 from math import exp
 from random import random
 from src.net_1d import Net1D
-import json
+from src.data_gather.data_gathering_automat import dump_data
 
 
 class Simulation:
     """Main object of the simulation"""
 
-    def __init__(self, _params, _load=False):
+    def __init__(self, _params, _data_to_viz_filename=None, _load_file=False):
         """
         :param _params: parameters of the simulation
         :type _params: Parameters
         """
 
         self.params = _params
+        self.data_to_viz_filename = _data_to_viz_filename
         self.i = 0
         self.sim_end = False
 
         # initialize first net
-        self.net = Net1D(self.params, _load=_load)
+        self.net = Net1D(self.params, _load_file=_load_file)
 
     def multiply_net(self):
         """Method creates n copies of the parent Net."""
@@ -107,20 +108,6 @@ class Simulation:
                                        'temperature': self.params.annealing_param_values[self.i]
                                        })
 
-    def dump_data(self, data, path):
-        """
-        Method dumps simulation data to json file
-
-        :param data: data in dictionary
-        :param path: path of the file to save
-        :return: None
-        """
-
-        with open(path, 'w') as file:
-            json.dump(data, file)
-
-        print("Data to viz save complete")
-
     def simulate(self):
         """Method runs net mutation on all Gates"""
 
@@ -170,4 +157,6 @@ class Simulation:
         self.sim_end = True
 
         # Dump simulation data to json file
-        # self.dump_data(data_to_viz, "net_viz/viz_data.txt")
+        if self.data_to_viz_filename:
+
+            dump_data(data_to_viz, self.data_to_viz_filename)

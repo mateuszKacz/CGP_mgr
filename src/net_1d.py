@@ -44,6 +44,7 @@ class Gate1D:
             self.gate_func = rnd.choice(self.params.gate_func)
             self.run_operation()
 
+    # noinspection PyCallingNonCallable
     def run_operation(self):
         """Calculates gate output_val."""
 
@@ -66,7 +67,7 @@ def rnd_gate(stop, start=0):
 class Net1D:
     """Creates a 1D net of gates"""
 
-    def __init__(self, _params, _load=False):
+    def __init__(self, _params, _load_file=False):
 
         """
         :param _params: parameters of the simulation
@@ -87,7 +88,7 @@ class Net1D:
         # inits
         self.init_gates_links()  # sets initial links
 
-        if not _load:
+        if not _load_file:
             self.calculate_all_outputs()  # sets initial output_val in the gates
             self.potential = self.calculate_total_potential()
 

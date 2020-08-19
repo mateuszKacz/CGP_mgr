@@ -75,14 +75,14 @@ class Parameters:
         if self.annealing_scheme is None:
             _annealing_param_values = [self.annealing_param_init_value for k in range(self.steps)]
 
-        elif self.annealing_scheme[0] is 'geom':
+        elif self.annealing_scheme[0] == 'geom':
             _annealing_param_values = [self.annealing_param_init_value*(self.annealing_scheme[1] ** k) for k in
                                        range(self.steps)]
 
-        elif self.annealing_scheme[0] is 'linear':
+        elif str(self.annealing_scheme[0]) == 'linear':
             _annealing_param_values = [self.annealing_param_init_value/(k + 1) for k in range(self.steps)]
 
-        elif self.annealing_scheme[0] is 'log':
+        elif self.annealing_scheme[0] == 'log':
             _annealing_param_values = [self.annealing_param_init_value/(1 + log(k + 1)) for k in range(self.steps)]
 
         else:

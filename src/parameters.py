@@ -72,20 +72,20 @@ class Parameters:
         :return: ndarray
         """
 
-        if self.annealing_scheme[0] is 'geom':
+        if self.annealing_scheme is None:
+            _annealing_param_values = [self.annealing_param_init_value for k in range(self.steps)]
+
+        elif self.annealing_scheme[0] is 'geom':
             _annealing_param_values = [self.annealing_param_init_value*(self.annealing_scheme[1] ** k) for k in
                                        range(self.steps)]
 
         elif self.annealing_scheme[0] is 'linear':
-            _annealing_param_values = [self.annealing_param_init_value/k for k in range(self.steps)]
+            _annealing_param_values = [self.annealing_param_init_value/(k + 1) for k in range(self.steps)]
 
         elif self.annealing_scheme[0] is 'log':
             _annealing_param_values = [self.annealing_param_init_value/(1 + log(k + 1)) for k in range(self.steps)]
 
-        elif self.annealing_scheme is None:
-            _annealing_param_values = [self.annealing_param_init_value for k in range(self.steps)]
-
         else:
-            raise ValueError("Wrong annealing scheme...choose one from ['geom','linear', 'log']")
+            raise ValueError(f"Wrong annealing scheme {self.annealing_scheme}...choose one from ['geom','linear', 'log']")
 
         return np.array(_annealing_param_values, dtype='float')

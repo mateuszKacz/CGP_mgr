@@ -7,6 +7,7 @@ import pandas as pd
 from os import chdir, mkdir
 import pathlib
 from src.cgpsa import CGPSA
+from multiprocessing import Pool
 
 
 # TODO: add multi threading
@@ -57,6 +58,33 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
         gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
 
     return gathered_data
+
+    # with Pool(processes=2) as pool:
+    #
+    #     multiprocess = [pool.apply_async(cgp_run, (_gate_func, _obj_func, _data, _input_data_size, _size_1d,
+    #                                                _num_copies, _pdb_mutation, _annealing_param, _annealing_scheme,
+    #                                                _steps, _load, gathered_data)) for x in range(10)]
+    #     print([res.get(timeout=1) for res in multiprocess])
+    #
+    #     pool.join()
+    #
+    # print("Pool stopped - returning values...")
+    #
+    # return gathered_data
+
+
+def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
+            _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load=False, _num_of_sim=10,
+            _gathered_data=None):
+
+    cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
+                  _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
+                  _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
+                  _load=_load)
+
+    cgpsa.start()
+
+    _gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
 
 
 def save_to_csv(_data, _filename, _new_dir=None):

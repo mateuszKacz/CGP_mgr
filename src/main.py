@@ -7,7 +7,6 @@ import src.user_inputs.objective_function as obj_func
 import src.user_inputs.gate_functions as gate_func
 from numpy import genfromtxt
 import src.data_gather.data_gathering_automat as data_gather
-import pandas as pd
 
 # TODO: gather data - SA
 # TODO: implement Parallel Tempering algorithm
@@ -26,9 +25,9 @@ def main():
 
     data = data_gather.gen_cgp_data(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
                                     _size_1d=15, _num_copies=5, _pdb_mutation=0.06, _annealing_param=100,
-                                    _annealing_scheme=['geom', 0.99], _steps=5000, _load=False, _num_of_sim=100)
+                                    _annealing_scheme=None, _steps=5000, _load=False, _num_of_sim=200)
 
-    data_gather.save_to_csv(data, "cgpsa_geom99_5000steps_numsim100_numcopies5_annealing100.csv", _new_dir='cgpsa')
+    data_gather.save_to_csv(data, "cgp_alone_test.csv")
 
 
 if __name__ == "__main__":

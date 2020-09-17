@@ -15,7 +15,7 @@ class PT:
     improve the dynamic properties of Monte Carlo method used in Simulated Annealing algorithm.
     """
 
-    def __init__(self, _cgpsa_object, _num_parallel_copies=4, _scheme=None):
+    def __init__(self, _cgpsa_object, _temperatures, _num_parallel_copies=4, _scheme=None):
         """
         Init method takes one CGP object initialized by the user and then creates copies following chosen Parallel
         Tempering scheme.
@@ -50,7 +50,7 @@ class PT:
     def calc_switch_probability(self, i, j):
         """
         Method calculates probability of state-exchange between systems. Essentially it follows Metropolis-Hastings
-        criterion: p = min(1; exp[ (E_i - E_j) * (1/k*T_i - 1/k*T_j) ])
+        criterion: p = min(1; exp[ (|E_i - E_j|) * (|1/k*T_i - 1/k*T_j|) ])
         where:
 
         E_i, E_j - potentials of two systems
@@ -58,10 +58,10 @@ class PT:
         k - in my version 'k' parameter is skipped, because we can just use temperature as control parameter (like Beta)
         """
 
-        return min(1., exp((self.cgp[i].simulation.net.potential -
-                            self.cgp[j].simulation.net.potential) *
-                           (1 / self.cgp[i].simulation.params.annealing_param_values[self.cgp[i].simulation.i] -
-                            1 / self.cgp[j].simulation.params.annealing_param_values[self.cgp[j].simulation.i])))
+        return min(1., exp(abs(self.cgp[i].simulation.net.potential -
+                               self.cgp[j].simulation.net.potential) *
+                           abs(1 / self.cgp[i].simulation.params.annealing_param_values[self.cgp[i].simulation.i] -
+                               1 / self.cgp[j].simulation.params.annealing_param_values[self.cgp[j].simulation.i])))
 
     def run(self):
         """

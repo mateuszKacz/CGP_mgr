@@ -7,7 +7,7 @@ from copy import deepcopy
 from math import exp
 from random import random
 from src.net_1d import Net1D
-from src.data_gather.data_gathering_automat import dump_data
+#from src.data_gather.data_gathering_automat import dump_data
 
 
 class Simulation:
@@ -130,10 +130,11 @@ class Simulation:
             if copies[best_copy_index].potential < self.net.potential:
                 self.net = deepcopy(copies[best_copy_index])
             else:
-                acc_pdb = self.calc_acceptance_probability(copies[best_copy_index].potential, self.net.potential)
+                if self.params.annealing_scheme:
+                    acc_pdb = self.calc_acceptance_probability(copies[best_copy_index].potential, self.net.potential)
 
-                if random() <= acc_pdb:
-                    self.net = copies[best_copy_index]
+                    if random() <= acc_pdb:
+                        self.net = deepcopy(copies[best_copy_index])
 
             # export local state of the net
             if self.i % 10 == 0:

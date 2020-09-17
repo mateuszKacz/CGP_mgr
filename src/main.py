@@ -17,14 +17,13 @@ def main():
 
     data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
 
-    cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
-                  _annealing_scheme=['linear'], _steps=1000, _load_file="data_gather/test_data/cgp_test.txt")
-
-    cgpsa.show_net()
-
     # cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
-    #               _annealing_scheme=['linear'], _steps=1000)
-    # cgpsa.start()
+    #              _steps=1000, _load_file="data_gather/test_data/cgp_test.txt")
+
+    # cgpsa.show_net()
+
+    cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=1000, _annealing_scheme=['geom',0.99])
+    cgpsa.start()
     # cgpsa.show_net()
     # cgpsa.save("cgp_test.txt")
 

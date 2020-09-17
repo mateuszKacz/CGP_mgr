@@ -108,7 +108,7 @@ class Simulation:
                                        'temperature': self.params.annealing_param_values[self.i]
                                        })
 
-    def simulate(self):
+    def run(self):
         """Method runs net mutation on all Gates"""
 
         data_to_viz = {'params': [], 'net': []}

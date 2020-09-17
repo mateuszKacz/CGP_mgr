@@ -70,7 +70,7 @@ class CGPSA:
         print("Starting simulation...")
 
         # starting main simulation loop
-        self.simulation.simulate()
+        self.simulation.run()
 
     def show_net(self):
         """
@@ -140,7 +140,7 @@ class CGPSA:
         """
 
         if _path == "":
-            _path = "cgp_evolved_net.txt"
+            _path = "data_gather/test_data/cgp_evolved_net.txt"
 
         print(f"Saving evolved Net in {_path}")
 

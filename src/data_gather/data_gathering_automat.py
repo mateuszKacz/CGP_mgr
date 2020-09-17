@@ -6,7 +6,7 @@
 import pandas as pd
 from os import chdir, mkdir
 import pathlib
-#from src.cgpsa import CGPSA
+from src.cgpsa import CGPSA
 from multiprocessing import Pool
 import json
 

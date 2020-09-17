@@ -37,15 +37,15 @@ class PT:
             _scheme = ["discrete"]
 
         self.num_parallel_copies = _num_parallel_copies
-        self.cgpsa = [CGPSA(_gate_func=_cgpsa_object.params.gate_func, _obj_func=_cgpsa_object.params.obj_func,
-                            _data=_cgpsa_object.params.data, _input_data_size=_cgpsa_object.params.input_data_size,
-                            _size_1d=_cgpsa_object.params.size_1d, _num_copies=_cgpsa_object.params.num_copies,
-                            _pdb_mutation=_cgpsa_object.params.pdb_mutation,
-                            _annealing_param=_cgpsa_object.params.annealing_param_init_value,
-                            _annealing_scheme=_cgpsa_object.params.annealing_scheme, _steps=_cgpsa_object.params.steps)
-                      for x in range(self.num_parallel_copies)]
+        self.cgp = [CGPSA(_gate_func=_cgpsa_object.params.gate_func, _obj_func=_cgpsa_object.params.obj_func,
+                          _data=_cgpsa_object.params.data, _input_data_size=_cgpsa_object.params.input_data_size,
+                          _size_1d=_cgpsa_object.params.size_1d, _num_copies=_cgpsa_object.params.num_copies,
+                          _pdb_mutation=_cgpsa_object.params.pdb_mutation,
+                          _annealing_param=_cgpsa_object.params.annealing_param_init_value,
+                          _annealing_scheme=_cgpsa_object.params.annealing_scheme, _steps=_cgpsa_object.params.steps)
+                    for x in range(self.num_parallel_copies)]
 
-        self.sim_end = [cgpsa.simulation.sim_end for cgpsa in self.cgpsa]
+        self.sim_end = [cgp.simulation.sim_end for cgp in self.cgp]
 
     def calc_switch_probability(self, i, j):
         """
@@ -58,12 +58,12 @@ class PT:
         k - in my version 'k' parameter is skipped, because we can just use temperature as control parameter (like Beta)
         """
 
-        return min(1., exp((self.cgpsa[i].simulation.net.potential -
-                            self.cgpsa[j].simulation.net.potential) *
-                           (1 / self.cgpsa[i].simulation.params.annealing_param_values[self.cgpsa[i].simulation.i] -
-                            1 / self.cgpsa[j].simulation.params.annealing_param_values[self.cgpsa[j].simulation.i])))
+        return min(1., exp((self.cgp[i].simulation.net.potential -
+                            self.cgp[j].simulation.net.potential) *
+                           (1 / self.cgp[i].simulation.params.annealing_param_values[self.cgp[i].simulation.i] -
+                            1 / self.cgp[j].simulation.params.annealing_param_values[self.cgp[j].simulation.i])))
 
-    def pt_algorithm(self):
+    def run(self):
         """
         Method implements core Parallel Tempering algorithm
         """
@@ -74,8 +74,8 @@ class PT:
             i = randint(0, self.num_parallel_copies)
             j = randint(0, self.num_parallel_copies)
 
-            if random() <= self.calc_switch_probability(i, j):
-                # if criterion is met switch systems
-                # TODO: add condition: if sim's are running then switch
-                self.cgpsa[i].simulation.net.net, self.cgpsa[j].simulation.net.net = \
-                    deepcopy(self.cgpsa[j].simulation.net.net), deepcopy(self.cgpsa[i].simulation.net.net)
+            if not self.sim_end[i] and not self.sim_end[j]:
+                if random() <= self.calc_switch_probability(i, j):
+                    # if criterion is met switch systems
+                    self.cgp[i].simulation.net.net, self.cgp[j].simulation.net.net = \
+                        deepcopy(self.cgp[j].simulation.net.net), deepcopy(self.cgp[i].simulation.net.net)

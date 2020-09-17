@@ -9,9 +9,6 @@ from numpy import genfromtxt
 from src.cgpsa import CGPSA
 import src.data_gather.data_gathering_automat as data_gather
 
-# TODO: gather data - SA
-# TODO: implement Parallel Tempering algorithm
-
 
 def main():
     """Main function"""
@@ -21,7 +18,7 @@ def main():
     data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
 
     cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
-                  _annealing_scheme=['linear'], _steps=1000, _load_file="cgp_test.txt")
+                  _annealing_scheme=['linear'], _steps=1000, _load_file="data_gather/test_data/cgp_test.txt")
 
     cgpsa.show_net()
 

@@ -164,6 +164,7 @@ class Simulation:
             self.run_step()
 
             # save local state of the net
+            # TODO: add iteration interval as a parameter - to control parameter gathering frequency
             self.save_data(self.data_to_viz)
 
             # print control params

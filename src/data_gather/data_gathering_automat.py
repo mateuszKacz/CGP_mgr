@@ -6,7 +6,7 @@
 import pandas as pd
 from os import chdir, mkdir
 import pathlib
-from src.cgpsa import CGPSA
+#from src.cgpsa import CGPSA
 from multiprocessing import Pool
 import json
 
@@ -77,6 +77,10 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
             _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
             _num_of_sim=10, _gathered_data=None):
+
+    """
+    Function runs one CGP algorythm simulation
+    """
 
     cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
                   _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,

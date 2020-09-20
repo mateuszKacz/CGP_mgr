@@ -7,7 +7,7 @@ from copy import deepcopy
 from math import exp
 from random import random
 from src.net_1d import Net1D
-#from src.data_gather.data_gathering_automat import dump_data
+from src.data_gather.data_gathering_automat import dump_data
 
 
 class Simulation:
@@ -20,9 +20,11 @@ class Simulation:
         """
 
         self.params = _params
-        self.data_to_viz_filename = _data_to_viz_filename
-        self.i = 0
         self.sim_end = False
+
+        self.i = 0
+        self.data_to_viz = {'params': [], 'net': []}
+        self.data_to_viz_filename = _data_to_viz_filename
 
         # initialize first net
         self.net = Net1D(self.params, _load_file=_load_file)
@@ -108,16 +110,33 @@ class Simulation:
                                        'temperature': self.params.annealing_param_values[self.i]
                                        })
 
-    def run(self):
-        """Method runs net mutation on all Gates"""
+    def get_params_history(self):
+        """
+        Method returns all params as a list of dictionaries.
 
-        data_to_viz = {'params': [], 'net': []}
+        :return: list
+        """
 
-        while self.params.annealing_param_values[self.i] > 0.:
+        potential = [step['potential'] for step in self.data_to_viz['params']]
+        steps = [i for i in range(len(self.data_to_viz['params']))]
+        param_history = {'potential': potential, 'step': steps}
 
-            self.i += 1  # simulation iterator
+        return param_history
 
-            potentials = []
+    def run_step(self, n=1):
+        """
+        Method runs n steps of the simulation.
+
+        :param n: how many steps of the simulation should be performed by the method
+        :type n: int
+        :return:
+        """
+
+        for i in range(n):
+
+            self.i += 1  # increment step indicator
+
+            potentials = []  # stores momentum potentials of all net-clones
             copies = self.multiply_net()  # makes n_copies of Net
 
             for copy in copies:
@@ -136,9 +155,16 @@ class Simulation:
                     if random() <= acc_pdb:
                         self.net = deepcopy(copies[best_copy_index])
 
-            # export local state of the net
-            if self.i % 10 == 0:
-                self.save_data(data_to_viz)
+    def run(self):
+        """Method runs net mutation on all Gates"""
+
+        while self.params.annealing_param_values[self.i] > 0.:
+
+            # essential algorithm step
+            self.run_step()
+
+            # save local state of the net
+            self.save_data(self.data_to_viz)
 
             # print control params
             if self.i % 200 == 0:
@@ -147,12 +173,12 @@ class Simulation:
             # simulation's end conditions
             if self.i % (self.params.steps - 1) == 0:  # quit if initial number of simulation steps is reached
                 self.show_final_solution()
-                self.save_data(data_to_viz)
+                self.save_data(self.data_to_viz)
                 break
 
             if self.net.potential == 0.:
                 self.show_final_solution()
-                self.save_data(data_to_viz)
+                self.save_data(self.data_to_viz)
                 break
 
         self.sim_end = True
@@ -160,4 +186,4 @@ class Simulation:
         # Dump simulation data to json file
         if self.data_to_viz_filename:
 
-            dump_data(data_to_viz, self.data_to_viz_filename)
+            dump_data(self.data_to_viz, self.data_to_viz_filename)

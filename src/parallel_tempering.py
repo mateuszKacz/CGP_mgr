@@ -157,12 +157,16 @@ class PT:
                 # if criterion is met switch systems
                 self.cgp[i].simulation.net.net, self.cgp[j].simulation.net.net = \
                     deepcopy(self.cgp[j].simulation.net.net), deepcopy(self.cgp[i].simulation.net.net)
-                print(f"Switched #{i} with #{j} \t Proba: {proba}")
+                # print(f"Switched #{i} with #{j} \t Proba: {proba}")
             else:
-                print("Didn't switch")
+                # print("Didn't switch")
+                continue
 
             # print control params
-            if self.curr_pt_step % 10 == 0:
-                self.show_control_params()
+            # if self.curr_pt_step % 10 == 0:
+            #     self.show_control_params()
+
+            if self.cgp[0].simulation.i % 200 == 0:
+                self.cgp[0].simulation.show_control_params()
 
         self.show_final_solution()

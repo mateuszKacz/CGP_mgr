@@ -13,7 +13,7 @@ class Parameters:
     """Class contains main initial values and parameters of the simulation"""
 
     def __init__(self, _gate_func, _obj_func, _data, _input_data_size, _size_1d, _num_copies, _pdb_mutation=0.03,
-                 _annealing_param_init_value=100, _annealing_scheme=None, _steps=10000):
+                 _annealing_param_init_value=100, _annealing_scheme=None, _steps=10000, _data_gather_interval=None):
         """
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
@@ -37,6 +37,11 @@ class Parameters:
         :type _annealing_scheme: list
         :param _steps: number of steps of the simulation
         :type _steps: int
+        :param _data_gather_interval: if provided it indicates how often (e.g. every 10 steps of the CGP simulation) the
+            momentum data from the simulation should be saved. Current state of the system in other words. If not
+            provided data are not saved during the simulation therefore Simulation.data_to_viz is empty as well as
+            method Simulation.get_params_history() (returns empty dictionary)
+        :type _data_gather_interval: int
         """
 
         # User files
@@ -58,6 +63,7 @@ class Parameters:
         # Other parameters
         self.num_copies = _num_copies  # number of Net copies created every step of the mutation
         self.steps = _steps
+        self.data_gather_interval = _data_gather_interval
 
         # Annealing parameter
         self.annealing_param_init_value = _annealing_param_init_value

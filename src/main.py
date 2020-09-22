@@ -24,10 +24,10 @@ def main():
     # cgpsa.show_net()
 
     # data gather for one simulation
-    cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=5000,
-                  _annealing_scheme=['geom', 0.99])
-    cgpsa.start()
-    data_gather.save_to_csv(cgpsa.simulation.get_params_history(), "every_step_momentum_data.txt")
+    # cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=5000,
+    #               _annealing_scheme=['geom', 0.99])
+    # cgpsa.start()
+    # data_gather.save_to_csv(cgpsa.simulation.get_params_history(), "every_step_momentum_data.txt")
 
     # cgpsa.show_net()
     # cgpsa.save("cgp_test.txt")
@@ -40,9 +40,9 @@ def main():
 
     # Parallel Tempering
 
-    # cgp_no_sa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=50)
-    # pt_alg = PT(cgp_no_sa, _temperatures=[10*x for x in range(1, 10)], _switch_step=10)
-    # pt_alg.run()
+    cgp_no_sa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=5000)
+    pt_alg = PT(cgp_no_sa, _temperatures=[10*x for x in range(1, 8)], _switch_step=10)
+    pt_alg.run()
 
 
 if __name__ == "__main__":

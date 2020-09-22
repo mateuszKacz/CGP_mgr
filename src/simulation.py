@@ -30,21 +30,26 @@ class Simulation:
         self.net = Net1D(self.params, _load_file=_load_file)
 
     def multiply_net(self):
-        """Method creates n copies of the parent Net."""
+        """Method creates n copies of the parent Net.
+
+        :return: None
+        """
 
         copies = [deepcopy(self.net) for x in range(self.params.num_copies)]
 
         return copies
 
     def calc_acceptance_probability(self, _new_net_potential, _net_potential):
-        """Method calculates probability of acceptance new not optimal state.
-        Function: e(-  delta_E / Beta)
+        """Method calculates probability of acceptance new not optimal state. Returns float in range (0,1) which is in
+        fact probability.
+
+        Function: exp(-  delta_E / Beta)
 
         :param _new_net_potential: potential of the mutated (child) Net
         :type _new_net_potential: double
         :param _net_potential: potential of the parent Net
         :type _net_potential: double
-        :return pdb(0,1)
+        :return: float
         """
 
         return exp(-(abs(_new_net_potential-_net_potential))/self.params.annealing_param_values[self.i])
@@ -114,7 +119,7 @@ class Simulation:
         """
         Method returns all params as a list of dictionaries.
 
-        :return: list
+        :return: dict
         """
 
         potential = [step['potential'] for step in self.data_to_viz['params']]
@@ -129,7 +134,7 @@ class Simulation:
 
         :param n: how many steps of the simulation should be performed by the method
         :type n: int
-        :return:
+        :return: None
         """
 
         for i in range(n):
@@ -158,14 +163,19 @@ class Simulation:
     def run(self):
         """Method runs net mutation on all Gates"""
 
+        # save first initial state of the system
+        if self.params.data_gather_interval:
+            self.save_data(self.data_to_viz)
+
         while self.params.annealing_param_values[self.i] > 0.:
 
             # essential algorithm step
             self.run_step()
 
             # save local state of the net
-            # TODO: add iteration interval as a parameter - to control parameter gathering frequency
-            self.save_data(self.data_to_viz)
+            if self.params.data_gather_interval:
+                if self.i % self.params.data_gather_interval == 0:
+                    self.save_data(self.data_to_viz)
 
             # print control params
             if self.i % 200 == 0:

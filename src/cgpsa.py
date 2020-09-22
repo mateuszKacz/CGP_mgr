@@ -12,7 +12,8 @@ class CGPSA:
     """Main Cartesian Genetic Programming with Simulated Annealing algorithm object initialized by the User"""
 
     def __init__(self, _gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
-                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False):
+                 _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000,
+                 _data_gather_interval=None, _load_file=False):
         """
         :param _gate_func: list of functions (gate operations)
         :type _gate_func: list
@@ -37,6 +38,11 @@ class CGPSA:
         :type _annealing_scheme: list
         :param _steps: number of steps of the simulation
         :type _steps: int
+        :param _data_gather_interval: if provided it indicates how often (e.g. every 10 steps of the CGP simulation) the
+            momentum data from the simulation should be saved. Current state of the system in other words. If not
+            provided data are not saved during the simulation therefore Simulation.data_to_viz is empty as well as
+            method Simulation.get_params_history() (returns empty dictionary)
+        :type _data_gather_interval: int
         :param _load_file: flag that indicates in CGP object should be read from saved .csv file
         """
 
@@ -54,7 +60,8 @@ class CGPSA:
                                      _pdb_mutation=_pdb_mutation,
                                      _annealing_param_init_value=_annealing_param,
                                      _annealing_scheme=_annealing_scheme,
-                                     _steps=_steps)
+                                     _steps=_steps,
+                                     _data_gather_interval=_data_gather_interval)
 
             print("Creating Simulation components...")
             self.simulation = Simulation(self.params)

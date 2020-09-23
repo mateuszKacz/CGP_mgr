@@ -3,8 +3,6 @@
 #   and initial values
 # ---------------------------------------- #
 
-from numpy import genfromtxt
-import src.user_inputs.gate_functions as gate_functions
 import numpy as np
 from math import log
 

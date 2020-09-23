@@ -10,13 +10,17 @@ from src.cgpsa import CGPSA
 from src.parallel_tempering import PT
 import src.data_gather.data_gathering_automat as data_gather
 
+# TODO: Travelling Salesman Problem
+
 
 def main():
     """Main function"""
     # input_random_gate = nand/or/or/and
     gate_fun = [gate_func.bin_and, gate_func.bin_nand, gate_func.bin_or, gate_func.bin_xor]
 
-    data = genfromtxt('user_inputs/input_data.txt', delimiter=',')
+    data_and_gate = genfromtxt('user_inputs/input_data.txt', delimiter=',')
+    data_random_gate = genfromtxt('user_inputs/input_random_gate.txt', delimiter=',')
+    data_even_check_gate = genfromtxt('user_inputs/input_even_check_gate.txt', delimiter=',')
 
     # cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5,
     #              _steps=1000, _load_file="data_gather/test_data/cgp_test.txt")
@@ -24,9 +28,9 @@ def main():
     # cgpsa.show_net()
 
     # data gather for one simulation
-    # cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=5000,
-    #               _annealing_scheme=['geom', 0.99])
-    # cgpsa.start()
+    cgpsa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data_even_check_gate, _input_data_size=5,
+                  _steps=5000, _annealing_scheme=['geom', 0.99])
+    cgpsa.start()
     # data_gather.save_to_csv(cgpsa.simulation.get_params_history(), "every_step_momentum_data.txt")
 
     # cgpsa.show_net()
@@ -40,9 +44,9 @@ def main():
 
     # Parallel Tempering
 
-    cgp_no_sa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=5000)
-    pt_alg = PT(cgp_no_sa, _temperatures=[10*x for x in range(1, 8)], _switch_step=10)
-    pt_alg.run()
+    # cgp_no_sa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data, _input_data_size=5, _steps=5000)
+    # pt_alg = PT(cgp_no_sa, _temperatures=[10*x for x in range(1, 8)], _switch_step=10)
+    # pt_alg.run()
 
 
 if __name__ == "__main__":

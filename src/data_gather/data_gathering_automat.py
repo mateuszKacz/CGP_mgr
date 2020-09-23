@@ -6,12 +6,9 @@
 import pandas as pd
 from os import chdir, mkdir
 import pathlib
-#from src.cgpsa import CGPSA
-from multiprocessing import Pool
 import json
 
 
-# TODO: add multi threading
 def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
                  _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
                  _num_of_sim=10):
@@ -59,19 +56,6 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
         gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
 
     return gathered_data
-
-    # with Pool(processes=2) as pool:
-    #
-    #     multiprocess = [pool.apply_async(cgp_run, kwgs=(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
-    #         _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=_load_file, _num_of_sim=10,
-    #         _gathered_data=None)) for x in range(10)]
-    #     print([res.get(timeout=1) for res in multiprocess])
-    #
-    #     pool.join()
-    #
-    # print("Pool stopped - returning values...")
-    #
-    # return gathered_data
 
 
 def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,

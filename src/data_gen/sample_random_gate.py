@@ -1,3 +1,7 @@
+#
+#   Script generates data for random gate
+#    from possible provided gate functions
+# ---------------------------------------- #
 
 from random import choice
 import numpy as np

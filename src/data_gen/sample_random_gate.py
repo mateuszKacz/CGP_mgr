@@ -38,7 +38,7 @@ for elem_1 in gate_var:
 
 data_out = np.array(data_out)
 
-path = (os.path.abspath(os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir))) + "/user_inputs/input_random_gate.txt"
+path = (os.path.abspath(os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir))) + "/user_inputs/input_random_gate_2.txt"
 
 np.savetxt(path, data_out, fmt='%d', delimiter=',')
 

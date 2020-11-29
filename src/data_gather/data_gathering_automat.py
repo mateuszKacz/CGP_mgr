@@ -6,12 +6,15 @@
 import pandas as pd
 from os import chdir, mkdir
 import pathlib
+from src.cgpsa import CGPSA
 import json
+from src.parallel_tempering import PT
+from tqdm.auto import tqdm
 
 
 def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
                  _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
-                 _num_of_sim=10):
+                 _num_of_sim=10, _algorithm='SA', _pt_temps=None, _pt_switch_step=None, show_progress=False):
     """
     Function takes CGPSA parameters with some additional variables and perform numerous simulations of CGPSA algorithm.
 
@@ -40,20 +43,52 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
     :type _load_file: str
     :param _num_of_sim: number of CGP simulations to perform for the data gathering process
     :type _num_of_sim: int
+    :param _algorithm: specifies if there should be Simulated Annealing performed or ParallelTempering
+    :param _pt_temps: list of temperatures for PT algorithm
+    :param _pt_switch_step: switch step for PT algorithm
+    :param show_progress: if True - shows Annealing Param Value and Obj Func Value every fixed amount of steps
     :return: list
     """
 
     gathered_data = []
 
-    for i in range(_num_of_sim):
-        cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
-                      _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
-                      _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
-                      _load_file=_load_file)
+    if _algorithm == 'SA':
 
-        cgpsa.start()
+        for i in tqdm(range(_num_of_sim), desc='Gathering data for SA'):
 
-        gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
+            print(f'Sim #: {i+1}')
+
+            cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
+                          _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
+                          _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
+                          _load_file=_load_file)
+
+            cgpsa.run(show_progress=show_progress)
+
+            gathered_data.append({'potential': cgpsa.simulation.net.potential,
+                                  'iteration': cgpsa.simulation.i,
+                                  'max_steps': _steps,
+                                  'annealing_param': _annealing_param
+                                  })
+
+    elif _algorithm == 'PT':
+
+        for i in range(_num_of_sim):
+
+            print(f'Sim #: {i+1}')
+
+            cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
+                          _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
+                          _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
+                          _load_file=_load_file)
+
+            pt_alg = PT(cgpsa, _temperatures=_pt_temps, _switch_step=_pt_switch_step)
+            pt_alg.run()
+
+            # TODO: what data should we gather for PT
+            # gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
+    else:
+        pass
 
     return gathered_data
 
@@ -63,7 +98,7 @@ def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _si
             _num_of_sim=10, _gathered_data=None):
 
     """
-    Function runs one CGP algorythm simulation
+    Function runs one CGP algorithm simulation
     """
 
     cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
@@ -71,7 +106,7 @@ def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _si
                   _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
                   _load_file=_load_file)
 
-    cgpsa.start()
+    cgpsa.run()
 
     _gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
 

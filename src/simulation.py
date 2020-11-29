@@ -7,7 +7,7 @@ from copy import deepcopy
 from math import exp
 from random import random
 from src.net_1d import Net1D
-from src.data_gather.data_gathering_automat import dump_data
+# from src.data_gather.data_gathering_automat import dump_data
 
 
 class Simulation:
@@ -160,7 +160,7 @@ class Simulation:
                     if random() <= acc_pdb:
                         self.net = deepcopy(copies[best_copy_index])
 
-    def run(self):
+    def run(self, show_progress=False):
         """Method runs net mutation on all Gates"""
 
         # save first initial state of the system
@@ -178,17 +178,20 @@ class Simulation:
                     self.save_data(self.data_to_viz)
 
             # print control params
-            if self.i % 200 == 0:
-                self.show_control_params()
+            if show_progress:
+                if self.i % 200 == 0:
+                    self.show_control_params()
 
             # simulation's end conditions
             if self.i % (self.params.steps - 1) == 0:  # quit if initial number of simulation steps is reached
-                self.show_final_solution()
+                if show_progress:
+                    self.show_final_solution()
                 self.save_data(self.data_to_viz)
                 break
 
             if self.net.potential == 0.:
-                self.show_final_solution()
+                if show_progress:
+                    self.show_final_solution()
                 self.save_data(self.data_to_viz)
                 break
 

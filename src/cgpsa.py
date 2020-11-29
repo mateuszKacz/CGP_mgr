@@ -67,7 +67,7 @@ class CGPSA:
             self.simulation = Simulation(self.params)
             print("CGP object ready")
 
-    def start(self):
+    def run(self, show_progress=False):
         """
         Method starts the simulation
         :return: None
@@ -77,7 +77,7 @@ class CGPSA:
         print("Starting simulation...")
 
         # starting main simulation loop
-        self.simulation.run()
+        self.simulation.run(show_progress=show_progress)
 
     def show_net(self):
         """

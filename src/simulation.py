@@ -6,7 +6,7 @@
 from copy import deepcopy
 from math import exp
 from random import random
-from src.net_1d import Net1D
+from net_1d import Net1D
 # from src.data_gather.data_gathering_automat import dump_data
 
 

@@ -3,8 +3,8 @@
 #
 # ---------------------------------------- #
 
-from src.parameters import Parameters
-from src.simulation import Simulation
+from parameters import Parameters
+from simulation import Simulation
 import json
 
 

@@ -4,7 +4,7 @@
 # ---------------------------------------- #
 
 from math import exp
-from src.cgpsa import CGPSA
+from cgpsa import CGPSA
 from random import randint, random, choice, gauss
 from copy import deepcopy
 

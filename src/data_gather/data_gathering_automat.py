@@ -6,9 +6,9 @@
 import pandas as pd
 from os import chdir, mkdir
 import pathlib
-from src.cgpsa import CGPSA
+from cgpsa import CGPSA
 import json
-from src.parallel_tempering import PT
+from parallel_tempering import PT
 from tqdm.auto import tqdm
 
 

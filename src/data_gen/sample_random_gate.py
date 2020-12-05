@@ -6,7 +6,7 @@
 from random import choice
 import numpy as np
 import os.path
-import src.user_inputs.gate_functions as gate_func
+import user_inputs.gate_functions as gate_func
 
 input_size = 5  # number of input data in one set
 number_of_inputs = 300  # number of data sets to supply the net

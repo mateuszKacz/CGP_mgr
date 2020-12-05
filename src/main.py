@@ -3,12 +3,12 @@
 #   procedures and initializing simulation
 # ---------------------------------------- #
 
-import src.user_inputs.objective_function as obj_func
-import src.user_inputs.gate_functions as gate_func
+import user_inputs.objective_function as obj_func
+import user_inputs.gate_functions as gate_func
 from numpy import genfromtxt
-from src.cgpsa import CGPSA
-from src.parallel_tempering import PT
-import src.data_gather.data_gathering_automat as data_gather
+from cgpsa import CGPSA
+from parallel_tempering import PT
+import data_gather.data_gathering_automat as data_gather
 from tqdm.auto import tqdm
 
 # TODO: Travelling Salesman Problem

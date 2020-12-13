@@ -56,7 +56,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
         for i in tqdm(range(_num_of_sim), desc='Gathering data for SA'):
 
-            print(f'Sim #: {i+1}')
+            print(f'Sim #: {i+1} Scheme: {_annealing_scheme} Temp: {_annealing_param}')
 
             cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
                           _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
@@ -68,7 +68,11 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
             gathered_data.append({'potential': cgpsa.simulation.net.potential,
                                   'iteration': cgpsa.simulation.i,
                                   'max_steps': _steps,
-                                  'annealing_param': _annealing_param
+                                  'annealing_param': _annealing_param,
+                                  'annealing_scheme': _annealing_scheme,
+                                  'net_size': _size_1d,
+                                  'num_copies': _num_copies,
+                                  'pdb_mutation': _pdb_mutation
                                   })
 
     elif _algorithm == 'PT':

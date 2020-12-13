@@ -46,9 +46,9 @@ def main():
     # data gather for different max_steps
     # max_steps = [10**x for x in range(1, 7)]
 
-    annealing_param = [x for x in range(10, 201, 10)]
+    annealing_param = [x for x in range(10, 201, 20)]
     schemes = [None, ['log'], ['linear'], ['geom', 0.99]]
-    num_sim = 100
+    num_sim = 30
     steps = 3000
 
     for scheme in tqdm(schemes, desc='Schemes'):

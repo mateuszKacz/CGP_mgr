@@ -83,7 +83,7 @@ class Net1D:
         # Net Output
         self.output_gate_index = rnd_gate(self.params.total_size)
         self.output = self.net[self.output_gate_index].output_val
-        self.potential = 0
+        self.potential = 0.
 
         # inits
         self.init_gates_links()  # sets initial links

@@ -4,9 +4,10 @@
 # ---------------------------------------- #
 
 from math import exp
-from cgpsa import CGPSA
+from .cgpsa import CGPSA
 from random import randint, random, choice, gauss
 from copy import deepcopy
+from tqdm import tqdm
 
 
 class PT:
@@ -15,7 +16,8 @@ class PT:
     improve the dynamic properties of Monte Carlo method used in Simulated Annealing algorithm.
     """
 
-    def __init__(self, _cgpsa_object, _temperatures, _switch_step=10, _cgp_steps=None, _scheme=None):
+    def __init__(self, _cgpsa_object, _temperatures, _switch_step=10, _cgp_steps=None, _scheme=None,
+                 _show_progress=False):
         """
         Init method takes one CGP object initialized by the user and then creates copies following chosen Parallel
         Tempering scheme.
@@ -35,6 +37,8 @@ class PT:
             Possible values ["discrete", "gaussian"]. Choosing "gaussian" will require additional parameters to add
             Sigma - gaussian deviation parameter.
             E. g. ["gaussian", 1] - std = 1, mean would be our system initial temperature so we can skip this parameter.
+        :param _show_progress: if False then control params are not shown during the simulation
+        :type _show_progress: boolean
         """
 
         # if user is giving explicitly how many CGP steps should be performed we have to update it with the CGP object
@@ -58,8 +62,11 @@ class PT:
 
         self.temperatures = sorted(_temperatures)
         self.num_parallel_copies = len(self.temperatures)
+        self.show_progress = _show_progress
         self.switch_step = _switch_step
         self.curr_pt_step = 0  # current PT step indicator
+        self.total_steps = 0
+        self.best_solution_steps = _cgp_steps
 
         # creating CGP objects with different temperatures
         self.cgp = [CGPSA(_gate_func=_cgpsa_object.params.gate_func, _obj_func=_cgpsa_object.params.obj_func,
@@ -71,6 +78,7 @@ class PT:
                     for i in range(self.num_parallel_copies)]
 
         self.sim_end = [cgp.simulation.sim_end for cgp in self.cgp]
+        self.best_potential = self.calc_best_solution_potential()
 
     def calc_switch_probability(self, i, j):
         """
@@ -94,12 +102,11 @@ class PT:
 
         :return: None
         """
-        message = []
+        message = f"Simulation #: {self.total_steps} \n"
 
         for cgp_obj in self.cgp:
-            message.append(f"Copy #: {self.cgp.index(cgp_obj)} \t Temp: {cgp_obj.params.annealing_param_init_value} \t"
-                           f"Pot: {cgp_obj.simulation.net.potential} \n")
-            message.append("\n")
+            message += f"Copy #: {self.cgp.index(cgp_obj)} \t Temp: {cgp_obj.params.annealing_param_init_value} \t " \
+                       f"Pot: {cgp_obj.simulation.net.potential} \n"
 
         print(message)
 
@@ -110,32 +117,44 @@ class PT:
         :return: None
         """
 
-        for cgp_obj in self.cgp:
-            cgp_obj.simulation.show_final_solution()
+        print(f"Best solution steps: {self.best_solution_steps} \n Best potential: {self.best_potential}")
+
+    def calc_best_solution_steps(self):
+        """Method shows best solution"""
+        potentials = [cgp_object.simulation.net.potential for cgp_object in self.cgp]
+        steps = [cgp_object.simulation.i for cgp_object in self.cgp]
+
+        return steps[potentials.index(min(potentials))]
+
+    def calc_best_solution_potential(self):
+        """Method shows best potential"""
+        potentials = [cgp_object.simulation.net.potential for cgp_object in self.cgp]
+
+        return min(potentials)
+
+    def update_sim_end(self):
+        self.sim_end = [cgp.simulation.sim_end for cgp in self.cgp]
 
     def run(self):
         """
         Method implements core Parallel Tempering algorithm
         """
 
-        for step in range(self.pt_steps):
+        for step in tqdm(range(self.pt_steps), desc='PT steps'):
 
             self.curr_pt_step += 1
-
+            self.total_steps += self.switch_step
             # run # of iterations of CGP mutation alg
             for cgp_instance in self.cgp:
+                cgp_instance.simulation.run_step(self.switch_step)
 
-                if self.is_gaussian:
-                    for iter_manual in range(self.switch_step):
-                        cgp_instance.simulation.run_step()
-                        # change the temperature following Gaussian distribution
-                        cgp_instance.params.annealing_param_values = [gauss(cgp_instance.params.
-                                                                            annealing_param_init_value, self.gauss_sigma
-                                                                            )
-                                                                      for x in range(len(cgp_instance.params.
-                                                                                         annealing_param_values))]
-                else:
-                    cgp_instance.simulation.run_step(self.switch_step)
+            self.update_sim_end()
+
+            if sum(self.sim_end) > 0:
+                self.best_solution_steps = self.calc_best_solution_steps()
+                self.best_potential = self.calc_best_solution_potential()
+                self.show_final_solution()
+                break
 
             # randomly select first system
             i = randint(0, self.num_parallel_copies - 1)
@@ -157,16 +176,15 @@ class PT:
                 # if criterion is met switch systems
                 self.cgp[i].simulation.net.net, self.cgp[j].simulation.net.net = \
                     deepcopy(self.cgp[j].simulation.net.net), deepcopy(self.cgp[i].simulation.net.net)
-                # print(f"Switched #{i} with #{j} \t Proba: {proba}")
             else:
-                # print("Didn't switch")
                 continue
 
-            # print control params
-            # if self.curr_pt_step % 10 == 0:
-            #     self.show_control_params()
+            if self.show_progress:
+                print(self.sim_end)
+                self.show_control_params()
 
-            if self.cgp[0].simulation.i % 200 == 0:
-                self.cgp[0].simulation.show_control_params()
+        self.best_solution_steps = self.calc_best_solution_steps()
+        self.best_potential = self.calc_best_solution_potential()
 
-        self.show_final_solution()
+        if self.show_progress:
+            self.show_final_solution()

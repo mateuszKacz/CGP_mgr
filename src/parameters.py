@@ -76,7 +76,7 @@ class Parameters:
         :return: ndarray
         """
 
-        if self.annealing_scheme is None:
+        if self.annealing_scheme is None or self.annealing_scheme[0] == 'const':
             _annealing_param_values = [self.annealing_param_init_value for k in range(self.steps)]
 
         elif self.annealing_scheme[0] == 'geom':

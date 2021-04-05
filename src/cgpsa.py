@@ -3,8 +3,8 @@
 #
 # ---------------------------------------- #
 
-from parameters import Parameters
-from simulation import Simulation
+from .parameters import Parameters
+from .simulation import Simulation
 import json
 
 

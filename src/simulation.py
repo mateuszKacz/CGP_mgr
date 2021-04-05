@@ -6,7 +6,7 @@
 from copy import deepcopy
 from math import exp
 from random import random
-from net_1d import Net1D
+from src.net_1d import Net1D
 # from src.data_gather.data_gathering_automat import dump_data
 
 
@@ -159,6 +159,10 @@ class Simulation:
 
                     if random() <= acc_pdb:
                         self.net = deepcopy(copies[best_copy_index])
+
+            if self.net.potential == 0.:
+                self.sim_end = True
+                break
 
     def run(self, show_progress=False):
         """Method runs net mutation on all Gates"""

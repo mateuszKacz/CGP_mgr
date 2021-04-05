@@ -4,20 +4,20 @@
 # ---------------------------------------- #
 
 import pandas as pd
-from os import chdir, mkdir
-import pathlib
-from cgpsa import CGPSA
+from ..cgpsa import CGPSA
 import json
-from parallel_tempering import PT
+from ..parallel_tempering import PT
 from tqdm.auto import tqdm
 
 
 def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
                  _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
-                 _num_of_sim=10, _algorithm='SA', _pt_temps=None, _pt_switch_step=None, show_progress=False):
+                 _num_of_sim=10, _algorithm='SA', _pt_temps=None, _pt_switch_step=None, _pt_scheme=None,
+                 _show_progress=False):
     """
     Function takes CGPSA parameters with some additional variables and perform numerous simulations of CGPSA algorithm.
 
+    :param _pt_scheme: if set to None then temperatures are set in place
     :param _gate_func: list of functions (gate operations)
     :type _gate_func: list
     :param _obj_func: function that calculates fitness of the Net
@@ -46,7 +46,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
     :param _algorithm: specifies if there should be Simulated Annealing performed or ParallelTempering
     :param _pt_temps: list of temperatures for PT algorithm
     :param _pt_switch_step: switch step for PT algorithm
-    :param show_progress: if True - shows Annealing Param Value and Obj Func Value every fixed amount of steps
+    :param _show_progress: if True - shows Annealing Param Value and Obj Func Value every fixed amount of steps
     :return: list
     """
 
@@ -56,7 +56,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
         for i in tqdm(range(_num_of_sim), desc='Gathering data for SA'):
 
-            print(f'Sim #: {i+1} Scheme: {_annealing_scheme} Temp: {_annealing_param}')
+            print(f"Sim #: {i+1} Scheme: {_annealing_scheme} Temp: {_annealing_param}")
 
             cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
                           _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
@@ -77,7 +77,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
     elif _algorithm == 'PT':
 
-        for i in range(_num_of_sim):
+        for i in tqdm(range(_num_of_sim), desc='Gathering data for PT'):
 
             print(f'Sim #: {i+1}')
 
@@ -86,11 +86,22 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
                           _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
                           _load_file=_load_file)
 
-            pt_alg = PT(cgpsa, _temperatures=_pt_temps, _switch_step=_pt_switch_step)
+            pt_alg = PT(cgpsa, _temperatures=_pt_temps, _switch_step=_pt_switch_step, _scheme=_pt_scheme,
+                        _show_progress=False)
             pt_alg.run()
 
-            # TODO: what data should we gather for PT
-            # gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
+            gathered_data.append({'potential': pt_alg.best_potential,
+                                  'iteration': pt_alg.best_solution_steps,
+                                  'max_steps': _steps,
+                                  'switch_step': _pt_switch_step,
+                                  'annealing_scheme': _annealing_scheme,
+                                  'net_size': _size_1d,
+                                  'num_copies': _num_copies,
+                                  'pdb_mutation': _pdb_mutation,
+                                  'pt_copies': len(_pt_temps),
+                                  'pt_scheme': _pt_scheme,
+                                  'temperatures': _pt_temps
+                                  })
     else:
         pass
 
@@ -115,42 +126,25 @@ def cgp_run(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _si
     _gathered_data.append({'potential': cgpsa.simulation.net.potential, 'iteration': cgpsa.simulation.i})
 
 
-def save_to_csv(_data, _filename, _new_dir=None):
+def save_to_csv(_data, _filepath, _new_dir=None):
     """
     Function exports data to csv file.
 
     :param _data: list or array - whatever Pandas DataFrame can handle.
     :type _data: list
-    :param _filename: name of the exported file
-    :type _filename: str
+    :param _filepath: name of the exported file
+    :type _filepath: str
     :param _new_dir: user can create a new directory for the data by passing string
     :type _new_dir: str
     :return: None
     """
-    root_path = pathlib.Path(__file__).absolute().parent
-
-    try:
-        chdir(root_path)
-
-    except NotADirectoryError:
-        raise NotADirectoryError
-
-    if _new_dir is not None:
-        try:
-            mkdir(_new_dir)
-            chdir(_new_dir)
-            root_path = root_path / _new_dir
-
-        except NotADirectoryError:
-            print(f"Can't make {_new_dir} directory")
-            raise NotADirectoryError
 
     try:
         # make Pandas DF and export to csv
         data_to_export = pd.DataFrame(_data)
-        data_to_export.to_csv(_filename)
+        data_to_export.to_csv(_filepath)
 
-        print(f'Data exported to: {str(root_path) + "/" + _filename}')
+        print(f'Data exported to: {_filepath}')
 
     except NotADirectoryError as err:
         print(err)

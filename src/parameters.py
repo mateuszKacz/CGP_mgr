@@ -5,6 +5,7 @@
 
 import numpy as np
 from math import log
+from random import gauss
 
 
 class Parameters:
@@ -75,17 +76,22 @@ class Parameters:
 
         :return: ndarray
         """
-
+        # PT_const / CGP_alone
         if self.annealing_scheme is None or self.annealing_scheme[0] == 'const':
             _annealing_param_values = [self.annealing_param_init_value for k in range(self.steps)]
-
+        # PT
+        elif self.annealing_scheme[0] == 'gaussian':
+            _annealing_param_values = [gauss(mu=self.annealing_param_init_value, sigma=self.annealing_scheme[1]) for k
+                                       in range(self.steps)]
+        # SA - geom
         elif self.annealing_scheme[0] == 'geom':
             _annealing_param_values = [self.annealing_param_init_value*(self.annealing_scheme[1] ** k) for k in
                                        range(self.steps)]
-
+        # SA - linear
         elif str(self.annealing_scheme[0]) == 'linear':
             _annealing_param_values = [self.annealing_param_init_value/(k + 1) for k in range(self.steps)]
 
+        # SA - logarithmic
         elif self.annealing_scheme[0] == 'log':
             _annealing_param_values = [self.annealing_param_init_value/(1 + log(k + 1)) for k in range(self.steps)]
 

@@ -9,7 +9,6 @@ from ..user_inputs import gate_functions as gate_func
 from ..cgpsa import CGPSA
 from ..parallel_tempering import PT
 import pathlib
-from ..data_gather.data_gathering_automat import gen_cgp_data
 
 
 def main():
@@ -19,7 +18,7 @@ def main():
     data_even_check_gate = genfromtxt(MAIN_USER_INPUT_PATH / 'input_even_check_gate.txt', delimiter=',')
 
     cgp_no_sa = CGPSA(_gate_func=gate_fun, _obj_func=obj_func.obj_func, _data=data_even_check_gate, _input_data_size=5,
-                      _steps=5000, _annealing_scheme=['const'])
+                      _steps=5000)
     pt_alg = PT(cgp_no_sa, _temperatures=[10*x for x in range(1, 8)], _switch_step=10, _show_progress=True,
                 _scheme=['gaussian', 1])
     pt_alg.run()

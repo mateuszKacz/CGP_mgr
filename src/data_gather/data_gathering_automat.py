@@ -63,7 +63,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
                           _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
                           _load_file=_load_file)
 
-            cgpsa.run(show_progress=show_progress)
+            cgpsa.run(show_progress=_show_progress)
 
             gathered_data.append({'potential': cgpsa.simulation.net.potential,
                                   'iteration': cgpsa.simulation.i,
@@ -79,8 +79,6 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
         for i in tqdm(range(_num_of_sim), desc='Gathering data for PT'):
 
-            print(f'Sim #: {i+1}')
-
             cgpsa = CGPSA(_gate_func=_gate_func, _obj_func=_obj_func, _data=_data, _input_data_size=_input_data_size,
                           _size_1d=_size_1d, _num_copies=_num_copies, _pdb_mutation=_pdb_mutation,
                           _annealing_param=_annealing_param, _annealing_scheme=_annealing_scheme, _steps=_steps,
@@ -92,6 +90,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
 
             gathered_data.append({'potential': pt_alg.best_potential,
                                   'iteration': pt_alg.best_solution_steps,
+                                  'switch_ratio': pt_alg.switch_ratio,
                                   'max_steps': _steps,
                                   'switch_step': _pt_switch_step,
                                   'annealing_scheme': _annealing_scheme,
@@ -100,7 +99,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
                                   'pdb_mutation': _pdb_mutation,
                                   'pt_copies': len(_pt_temps),
                                   'pt_scheme': _pt_scheme,
-                                  'temperatures': _pt_temps
+                                  'init_temperatures': _pt_temps,
                                   })
     else:
         pass

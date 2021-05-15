@@ -29,7 +29,8 @@ def main():
                         _algorithm='PT', _pt_switch_step=switch_step, _pt_scheme=pt_scheme, _show_progress=False,
                         _num_of_sim=num_sim)
 
-    save_to_csv(data, MAIN_DATA_GATHER_PATH / f'pt_example_numsim{num_sim}_switch_step{switch_step}_steps{steps}_ptscheme{pt_scheme[0]}{pt_scheme[1]}_sa{annealing_scheme[0]}.csv')
+    save_to_csv(data, MAIN_DATA_GATHER_PATH / f'pt_evencheck_numsim{num_sim}_switch_step{switch_step}_steps{steps}'
+                                              f'_ptscheme_{pt_scheme[0]}{pt_scheme[1]}_sa_{annealing_scheme[0]}.csv')
 
 
 if __name__ == "__main__":

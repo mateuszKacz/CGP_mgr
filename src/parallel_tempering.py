@@ -5,7 +5,7 @@
 
 from math import exp
 from .cgpsa import CGPSA
-from random import randint, random, choice, gauss
+from random import randint, random, choice
 from copy import deepcopy
 from tqdm import tqdm
 
@@ -66,6 +66,8 @@ class PT:
         self.switch_step = _switch_step
         self.curr_pt_step = 0  # current PT step indicator
         self.total_steps = 0
+        self.number_of_switches = 0
+        self.switch_ratio = 0.
         self.best_solution_steps = _cgp_steps
 
         # creating CGP objects with different temperatures
@@ -74,7 +76,7 @@ class PT:
                           _size_1d=_cgpsa_object.params.size_1d, _num_copies=_cgpsa_object.params.num_copies,
                           _pdb_mutation=_cgpsa_object.params.pdb_mutation,
                           _annealing_param=_temperatures[i],
-                          _annealing_scheme=_cgpsa_object.params.annealing_scheme, _steps=_cgpsa_object.params.steps)
+                          _annealing_scheme=_scheme, _steps=_cgpsa_object.params.steps)
                     for i in range(self.num_parallel_copies)]
 
         self.sim_end = [cgp.simulation.sim_end for cgp in self.cgp]
@@ -132,6 +134,10 @@ class PT:
 
         return min(potentials)
 
+    def calc_switch_ratio(self):
+        """Method calculates the switch ratio after the simulation"""
+        return self.number_of_switches / self.pt_steps
+
     def update_sim_end(self):
         self.sim_end = [cgp.simulation.sim_end for cgp in self.cgp]
 
@@ -153,7 +159,8 @@ class PT:
             if sum(self.sim_end) > 0:
                 self.best_solution_steps = self.calc_best_solution_steps()
                 self.best_potential = self.calc_best_solution_potential()
-                self.show_final_solution()
+                if self.show_progress:
+                    self.show_final_solution()
                 break
 
             # randomly select first system
@@ -176,6 +183,7 @@ class PT:
                 # if criterion is met switch systems
                 self.cgp[i].simulation.net.net, self.cgp[j].simulation.net.net = \
                     deepcopy(self.cgp[j].simulation.net.net), deepcopy(self.cgp[i].simulation.net.net)
+                self.number_of_switches += 1
             else:
                 continue
 
@@ -185,6 +193,7 @@ class PT:
 
         self.best_solution_steps = self.calc_best_solution_steps()
         self.best_potential = self.calc_best_solution_potential()
+        self.switch_ratio = self.calc_switch_ratio()
 
         if self.show_progress:
             self.show_final_solution()

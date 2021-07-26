@@ -9,3 +9,5 @@ venv/
 
 charts/
 notebooks/.ipynb_checkpoints/
+
+.idea/

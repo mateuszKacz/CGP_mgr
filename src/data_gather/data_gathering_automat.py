@@ -13,10 +13,12 @@ from tqdm.auto import tqdm
 def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0, _size_1d=15, _num_copies=5,
                  _pdb_mutation=0.06, _annealing_param=100, _annealing_scheme=None, _steps=10000, _load_file=False,
                  _num_of_sim=10, _algorithm='SA', _pt_temps=None, _pt_switch_step=None, _pt_scheme=None,
-                 _show_progress=False):
+                 _pt_num_parallel_copies=5, _show_progress=False):
     """
     Function takes CGPSA parameters with some additional variables and perform numerous simulations of CGPSA algorithm.
 
+    :param _pt_num_parallel_copies: number of CGP copies for the PT algorithm
+    :type _pt_num_parallel_copies: int
     :param _pt_scheme: if set to None then temperatures are set in place
     :param _gate_func: list of functions (gate operations)
     :type _gate_func: list
@@ -85,7 +87,7 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
                           _load_file=_load_file)
 
             pt_alg = PT(cgpsa, _temperatures=_pt_temps, _switch_step=_pt_switch_step, _scheme=_pt_scheme,
-                        _show_progress=False)
+                        _num_parallel_copies=_pt_num_parallel_copies, _show_progress=False)
             pt_alg.run()
 
             gathered_data.append({'potential': pt_alg.best_potential,
@@ -97,9 +99,9 @@ def gen_cgp_data(_gate_func=None, _obj_func=None, _data=None, _input_data_size=0
                                   'net_size': _size_1d,
                                   'num_copies': _num_copies,
                                   'pdb_mutation': _pdb_mutation,
-                                  'pt_copies': len(_pt_temps),
+                                  'pt_copies': pt_alg.num_parallel_copies,
                                   'pt_scheme': _pt_scheme,
-                                  'init_temperatures': _pt_temps,
+                                  'init_temperatures': pt_alg.temperatures,
                                   })
     else:
         pass

@@ -28,6 +28,6 @@ for elem_1 in gate_var:
                     data_out.append(dataset)
 
 data_out = np.array(data_out)
-path = (os.path.abspath(os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir))) + "/user_inputs/input_data.txt"
+path = (os.path.abspath(os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir))) + "/user_inputs/input_and_gate.txt"
 
 np.savetxt(path, data_out, fmt='%d', delimiter=',')

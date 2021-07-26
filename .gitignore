@@ -1,0 +1,11 @@
+
+.DS_Store
+
+src/__pycache__/
+
+*.pyc
+
+venv/
+
+charts/
+notebooks/.ipynb_checkpoints/

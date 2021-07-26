@@ -3,7 +3,7 @@
 #   algorithm for CGP
 # ---------------------------------------- #
 
-from math import exp
+from math import exp, log
 from .cgpsa import CGPSA
 from random import randint, random, choice
 from copy import deepcopy
@@ -17,7 +17,7 @@ class PT:
     """
 
     def __init__(self, _cgpsa_object, _temperatures, _switch_step=10, _cgp_steps=None, _scheme=None,
-                 _show_progress=False):
+                 _num_parallel_copies=5, _desired_acceptance_ratio=0.2, _show_progress=False):
         """
         Init method takes one CGP object initialized by the user and then creates copies following chosen Parallel
         Tempering scheme.
@@ -26,7 +26,9 @@ class PT:
 
         :param _cgpsa_object: CGPSA initialized object - it is a scheme for other PT copies to follow
         :type _cgpsa_object: CGPSA
-        :param _temperatures: list of temperatures values to use for the copies of the CGP
+        :param _temperatures: list of temperatures values to use for the copies of the CGP, if only one
+            temperature is passed, then the PT object determines the other temperatures using calc_optimal_temperatures
+            method.
         :type _temperatures: list
         :param _switch_step: how many iterations proceed between the systems gave an ability to switch
         :type _switch_step: int
@@ -37,6 +39,8 @@ class PT:
             Possible values ["discrete", "gaussian"]. Choosing "gaussian" will require additional parameters to add
             Sigma - gaussian deviation parameter.
             E. g. ["gaussian", 1] - std = 1, mean would be our system initial temperature so we can skip this parameter.
+        :param _desired_acceptance_ratio: according to the literature this parameter should normalize the switch
+            acceptance ratio between system
         :param _show_progress: if False then control params are not shown during the simulation
         :type _show_progress: boolean
         """
@@ -60,8 +64,15 @@ class PT:
         else:
             raise Exception("Wrong scheme! Choose 'gaussian' or 'discrete' ...")
 
-        self.temperatures = sorted(_temperatures)
-        self.num_parallel_copies = len(self.temperatures)
+        if isinstance(_temperatures, float):
+            self.init_temperature = _temperatures
+            self.num_parallel_copies = _num_parallel_copies
+            self.temperatures = self.calc_optimal_temperatures(self.init_temperature,
+                                                               desired_acceptance_ratio=_desired_acceptance_ratio)
+        else:
+            self.temperatures = sorted(_temperatures)
+            self.num_parallel_copies = len(self.temperatures)
+
         self.show_progress = _show_progress
         self.switch_step = _switch_step
         self.curr_pt_step = 0  # current PT step indicator
@@ -75,7 +86,7 @@ class PT:
                           _data=_cgpsa_object.params.data, _input_data_size=_cgpsa_object.params.input_data_size,
                           _size_1d=_cgpsa_object.params.size_1d, _num_copies=_cgpsa_object.params.num_copies,
                           _pdb_mutation=_cgpsa_object.params.pdb_mutation,
-                          _annealing_param=_temperatures[i],
+                          _annealing_param=self.temperatures[i],
                           _annealing_scheme=_scheme, _steps=_cgpsa_object.params.steps)
                     for i in range(self.num_parallel_copies)]
 
@@ -137,6 +148,24 @@ class PT:
     def calc_switch_ratio(self):
         """Method calculates the switch ratio after the simulation"""
         return self.number_of_switches / self.pt_steps
+
+    def calc_optimal_temperatures(self, init_temperature, desired_acceptance_ratio=0.2):
+        """
+        Method calculates the optimal initial temperatures of the systems based on the temperature of the first PT
+        object.
+
+        :param init_temperature: the lowest temperature from all the copies of the system used as a base for the
+            calculation of the rest temperatures aka. annealing_parameters
+        :param desired_acceptance_ratio: according to the literature this parameter should normalize the switch
+            acceptance ratio between system
+
+        :return: List[float]
+        """
+        temperatures = [init_temperature]
+        for ith_temp in range(self.num_parallel_copies):
+            temperatures.append(log(desired_acceptance_ratio + exp(temperatures[-1])))
+
+        return temperatures
 
     def update_sim_end(self):
         self.sim_end = [cgp.simulation.sim_end for cgp in self.cgp]

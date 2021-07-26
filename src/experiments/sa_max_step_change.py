@@ -17,7 +17,7 @@ def main():
     MAIN_USER_INPUT_PATH = pathlib.Path().absolute() / 'src/user_inputs'
 
     gate_fun = [gate_func.bin_and, gate_func.bin_nand, gate_func.bin_or, gate_func.bin_xor]
-    data_even_check_gate = genfromtxt(MAIN_USER_INPUT_PATH / 'input_random_gate_nand_xor_and_and.txt', delimiter=',')
+    data_even_check_gate = genfromtxt(MAIN_USER_INPUT_PATH / 'input_random_gate_2.txt', delimiter=',')
 
     max_steps = [10**x for x in range(1, 7)]
 

@@ -15,4 +15,4 @@ def obj_func(data_input, net_output):
         else:
             score.append(1)
 
-    return sum(score)/len(net_output)
+    return sum(score) / len(net_output)

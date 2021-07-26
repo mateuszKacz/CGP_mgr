@@ -6,7 +6,11 @@
 from copy import deepcopy
 from math import exp
 from random import random
+
+from src.data_gather.data_gathering_automat import dump_data
 from src.net_1d import Net1D
+
+
 # from src.data_gather.data_gathering_automat import dump_data
 
 
@@ -23,7 +27,7 @@ class Simulation:
         self.sim_end = False
 
         self.i = 0
-        self.data_to_viz = {'params': [], 'net': []}
+        self.data_to_viz = {"params": [], "net": []}
         self.data_to_viz_filename = _data_to_viz_filename
 
         # initialize first net
@@ -40,8 +44,8 @@ class Simulation:
         return copies
 
     def calc_acceptance_probability(self, _new_net_potential, _net_potential):
-        """Method calculates probability of acceptance new not optimal state. Returns float in range (0,1) which is in
-        fact probability.
+        """Method calculates probability of acceptance new not optimal state. Returns
+        float in range (0,1) which is in fact probability.
 
         Function: exp(-  delta_E / Beta)
 
@@ -52,7 +56,10 @@ class Simulation:
         :return: float
         """
 
-        return exp(-(abs(_new_net_potential-_net_potential))/self.params.annealing_param_values[self.i])
+        return exp(
+            -(abs(_new_net_potential - _net_potential))
+            / self.params.annealing_param_values[self.i]
+        )
 
     def show_final_solution(self):
         """
@@ -79,9 +86,12 @@ class Simulation:
         :return: None
         """
 
-        print(f'Sim iter: {self.i}')
-        print('Obj func: {:.3f} \t Annealing param value: {:.2f}'.format(self.net.potential,
-                                                                         self.params.annealing_param_values[self.i]))
+        print(f"Sim iter: {self.i}")
+        print(
+            "Obj func: {:.3f} \t Annealing param value: {:.2f}".format(
+                self.net.potential, self.params.annealing_param_values[self.i]
+            )
+        )
 
     def save_data(self, _data_to_viz):
         """
@@ -93,27 +103,34 @@ class Simulation:
         net = []
         for gate in self.net.net:
             if gate.gate_index < self.params.input_data_size:
-                net.append({
-                    'gate_index': gate.gate_index,
-                    'active_input_index': gate.active_input_index,
-                    'active_input_value': gate.active_input_value,
-                    'output_value': gate.output_val,
-                    'gate_func': gate.gate_func,
-                })
+                net.append(
+                    {
+                        "gate_index": gate.gate_index,
+                        "active_input_index": gate.active_input_index,
+                        "active_input_value": gate.active_input_value,
+                        "output_value": gate.output_val,
+                        "gate_func": gate.gate_func,
+                    }
+                )
             else:
-                net.append({
-                    'gate_index': gate.gate_index,
-                    'active_input_index': gate.active_input_index,
-                    'active_input_value': gate.active_input_value,
-                    'output_value': gate.output_val,
-                    'gate_func': gate.gate_func.__name__,
-                })
-        _data_to_viz['net'].append(net)
-        _data_to_viz['params'].append({'output_gate_index': self.net.output_gate_index,
-                                       'output': self.net.output,
-                                       'potential': self.net.potential,
-                                       'temperature': self.params.annealing_param_values[self.i]
-                                       })
+                net.append(
+                    {
+                        "gate_index": gate.gate_index,
+                        "active_input_index": gate.active_input_index,
+                        "active_input_value": gate.active_input_value,
+                        "output_value": gate.output_val,
+                        "gate_func": gate.gate_func.__name__,
+                    }
+                )
+        _data_to_viz["net"].append(net)
+        _data_to_viz["params"].append(
+            {
+                "output_gate_index": self.net.output_gate_index,
+                "output": self.net.output,
+                "potential": self.net.potential,
+                "temperature": self.params.annealing_param_values[self.i],
+            }
+        )
 
     def get_params_history(self):
         """
@@ -122,9 +139,9 @@ class Simulation:
         :return: dict
         """
 
-        potential = [step['potential'] for step in self.data_to_viz['params']]
-        steps = [i for i in range(len(self.data_to_viz['params']))]
-        param_history = {'potential': potential, 'step': steps}
+        potential = [step["potential"] for step in self.data_to_viz["params"]]
+        steps = [i for i in range(len(self.data_to_viz["params"]))]
+        param_history = {"potential": potential, "step": steps}
 
         return param_history
 
@@ -155,12 +172,14 @@ class Simulation:
                 self.net = deepcopy(copies[best_copy_index])
             else:
                 if self.params.annealing_scheme:
-                    acc_pdb = self.calc_acceptance_probability(copies[best_copy_index].potential, self.net.potential)
+                    acc_pdb = self.calc_acceptance_probability(
+                        copies[best_copy_index].potential, self.net.potential
+                    )
 
                     if random() <= acc_pdb:
                         self.net = deepcopy(copies[best_copy_index])
 
-            if self.net.potential == 0.:
+            if self.net.potential == 0.0:
                 self.sim_end = True
                 break
 
@@ -171,7 +190,7 @@ class Simulation:
         if self.params.data_gather_interval:
             self.save_data(self.data_to_viz)
 
-        while self.params.annealing_param_values[self.i] > 0.:
+        while self.params.annealing_param_values[self.i] > 0.0:
 
             # essential algorithm step
             self.run_step()
@@ -187,13 +206,15 @@ class Simulation:
                     self.show_control_params()
 
             # simulation's end conditions
-            if self.i % (self.params.steps - 1) == 0:  # quit if initial number of simulation steps is reached
+            if (
+                self.i % (self.params.steps - 1) == 0
+            ):  # quit if initial number of simulation steps is reached
                 if show_progress:
                     self.show_final_solution()
                 self.save_data(self.data_to_viz)
                 break
 
-            if self.net.potential == 0.:
+            if self.net.potential == 0.0:
                 if show_progress:
                     self.show_final_solution()
                 self.save_data(self.data_to_viz)

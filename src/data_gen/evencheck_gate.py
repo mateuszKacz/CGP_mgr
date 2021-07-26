@@ -4,7 +4,9 @@
 # ---------------------------------------- #
 
 import os
+
 import numpy as np
+
 
 # 1 0 1 0 1 is not even because sum of those '1' is 3
 # 1 0 1 0 0 is even because sum of those '1' is 2
@@ -31,6 +33,10 @@ for elem_1 in gate_var:
 
 data_out = np.array(data_out)
 
-path = (os.path.abspath(os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir))) + "/user_inputs/input_even_check_gate.txt"
+path = (
+    os.path.abspath(
+        os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir)
+    )
+) + "/user_inputs/input_even_check_gate.txt"
 
-np.savetxt(path, data_out, delimiter=',')
+np.savetxt(path, data_out, delimiter=",")

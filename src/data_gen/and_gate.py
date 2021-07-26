@@ -3,8 +3,10 @@
 #   user should prepare give data file
 # ---------------------------------------- #
 
-import numpy as np
 import os.path
+
+import numpy as np
+
 
 input_size = 5  # number of input data in one set
 number_of_inputs = 300  # number of data sets to supply the net
@@ -28,6 +30,10 @@ for elem_1 in gate_var:
                     data_out.append(dataset)
 
 data_out = np.array(data_out)
-path = (os.path.abspath(os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir))) + "/user_inputs/input_and_gate.txt"
+path = (
+    os.path.abspath(
+        os.path.join(os.path.abspath(os.path.join(__file__, os.pardir)), os.pardir)
+    )
+) + "/user_inputs/input_and_gate.txt"
 
-np.savetxt(path, data_out, fmt='%d', delimiter=',')
+np.savetxt(path, data_out, fmt="%d", delimiter=",")

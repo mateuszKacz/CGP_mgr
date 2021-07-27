@@ -9,6 +9,7 @@ from numpy import genfromtxt
 from tqdm import tqdm
 
 from src.utils.save_data import save_to_csv
+
 from ..data_gather.data_gathering_automat import gen_cgp_data
 from ..user_inputs import gate_functions as gate_func, objective_function as obj_func
 

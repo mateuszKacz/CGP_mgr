@@ -18,9 +18,6 @@ def main():
         gate_func.bin_xor,
     ]
 
-    # data_and_gate = genfromtxt('user_inputs/input_and_gate.txt', delimiter=',')
-    # data_random_gate = genfromtxt('user_inputs/input_random_gate_2.txt',
-    # delimiter=',')
     data_even_check_gate = genfromtxt(
         "user_inputs/input_even_check_gate.txt", delimiter=","
     )

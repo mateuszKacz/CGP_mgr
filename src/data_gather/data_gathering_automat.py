@@ -3,9 +3,6 @@
 #
 # ---------------------------------------- #
 
-import json
-
-import pandas as pd
 from tqdm.auto import tqdm
 
 from ..cgpsa import CGPSA

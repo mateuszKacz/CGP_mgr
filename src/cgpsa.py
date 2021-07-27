@@ -95,6 +95,10 @@ class CGPSA:
     def run(self, show_progress=False):
         """
         Method starts the simulation
+
+        :param show_progress: if True the control parameters would be printed every
+            200 steps of the simulation.
+        :type show_progress: bool
         :return: None
         """
 
@@ -107,6 +111,7 @@ class CGPSA:
     def show_net(self):
         """
         Method prints created Net
+
         :return: None
         """
         # Printing initial Net

@@ -124,7 +124,7 @@ class Net1D:
                 + str(gate.gate_func)
             )
 
-        for gate in self.net[self.params.input_length:]:
+        for gate in self.net[self.params.input_length :]:
             print(
                 str(gate.gate_index)
                 + "\t"
@@ -145,7 +145,7 @@ class Net1D:
                 + str(gate.gate_func)
             )
 
-        for gate in self.net[self.params.input_data_size:]:
+        for gate in self.net[self.params.input_data_size :]:
             print(
                 "Gate: "
                 + str(gate.gate_index)

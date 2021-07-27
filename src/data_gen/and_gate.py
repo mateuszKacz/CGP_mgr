@@ -1,6 +1,6 @@
-#   data_gen generation script
-#   this is sample data normally
-#   user should prepare give data file
+#   data_gen and gate input/output generation script
+#   this is sample data, normally
+#   user should prepare this file
 # ---------------------------------------- #
 
 import os.path

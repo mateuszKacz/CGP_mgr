@@ -7,8 +7,8 @@ from copy import deepcopy
 from math import exp
 from random import random
 
-from src.utils.save_data import dump_data
 from src.net_1d import Net1D
+from src.utils.save_data import dump_data
 
 
 class Simulation:
@@ -181,7 +181,13 @@ class Simulation:
                 break
 
     def run(self, show_progress=False):
-        """Method runs net mutation on all Gates"""
+        """
+        Method runs net mutation on all Gates.
+
+        :param show_progress: if True control parameters would be printed out every
+            200 steps.
+        :type show_progress: bool
+        """
 
         # save first initial state of the system
         if self.params.data_gather_interval:

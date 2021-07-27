@@ -8,6 +8,7 @@ import pathlib
 from numpy import genfromtxt
 
 from src.utils.save_data import save_to_csv
+
 from ..data_gather import data_gathering_automat as data_gather
 from ..user_inputs import gate_functions as gate_func, objective_function as obj_func
 

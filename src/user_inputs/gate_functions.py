@@ -4,7 +4,7 @@
 # ---------------------------------------- #
 
 
-"""Set of user-defined sample functions"""
+"""Set of user-defined sample gate functions"""
 
 
 def bin_and(data):

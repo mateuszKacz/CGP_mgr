@@ -7,11 +7,8 @@ from copy import deepcopy
 from math import exp
 from random import random
 
-from src.data_gather.data_gathering_automat import dump_data
+from src.utils.save_data import dump_data
 from src.net_1d import Net1D
-
-
-# from src.data_gather.data_gathering_automat import dump_data
 
 
 class Simulation:

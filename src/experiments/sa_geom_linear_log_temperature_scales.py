@@ -10,6 +10,7 @@ import numpy as np
 from numpy import genfromtxt
 from tqdm import tqdm
 
+from src.utils.save_data import save_to_csv
 from ..data_gather import data_gathering_automat as data_gather
 from ..user_inputs import gate_functions as gate_func, objective_function as obj_func
 
@@ -56,7 +57,7 @@ def main():
 
         file_path = MAIN_DATA_PATH / f"even_gate_temp_log_scale_0005_200_{scheme}.csv"
 
-        data_gather.save_to_csv(all_data, file_path)
+        save_to_csv(all_data, file_path)
 
     if __name__ == "__main__":
         main()

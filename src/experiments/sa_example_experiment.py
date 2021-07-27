@@ -7,8 +7,8 @@ import pathlib
 
 from numpy import genfromtxt
 
+from src.utils.save_data import save_to_csv
 from ..cgpsa import CGPSA
-from ..data_gather import data_gathering_automat as data_gather
 from ..user_inputs import gate_functions as gate_func, objective_function as obj_func
 
 
@@ -35,7 +35,7 @@ def main():
         _data_gather_interval=1,
     )
     cgpsa.run(show_progress=True)
-    data_gather.save_to_csv(
+    save_to_csv(
         cgpsa.simulation.get_params_history(),
         OUTPUT_PATH / "every_step_momentum_data_evencheck_gate_cgp_alone_sa.txt",
     )

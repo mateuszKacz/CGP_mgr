@@ -7,6 +7,7 @@ import pathlib
 
 from numpy import genfromtxt
 
+from src.utils.save_data import save_to_csv
 from ..data_gather import data_gathering_automat as data_gather
 from ..user_inputs import gate_functions as gate_func, objective_function as obj_func
 
@@ -47,7 +48,7 @@ def main():
 
     file_path = MAIN_DATA_PATH / f"evencheck_gate_best_params_{scheme[0]}.csv"
 
-    data_gather.save_to_csv(data, file_path)
+    save_to_csv(data, file_path)
 
 
 if __name__ == "__main__":

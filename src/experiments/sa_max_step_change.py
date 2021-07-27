@@ -8,6 +8,7 @@ import pathlib
 from numpy import genfromtxt
 from tqdm import tqdm
 
+from src.utils.save_data import save_to_csv
 from ..data_gather import data_gathering_automat as data_gather
 from ..user_inputs import gate_functions as gate_func, objective_function as obj_func
 
@@ -57,7 +58,7 @@ def main():
             / f"random2_gate_max_step_10_10000000_{scheme['scheme'][0]}.csv"
         )
 
-        data_gather.save_to_csv(all_data, file_path)
+        save_to_csv(all_data, file_path)
 
 
 if __name__ == "__main__":

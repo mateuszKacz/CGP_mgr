@@ -13,6 +13,9 @@ isort:
 black:
 	poetry run black --config pyproject.toml src
 
+experiment:
+	poetry run python -m src.experiments.${EXP_NAME}
+
 format: isort black
 
 check: format lint

@@ -10,7 +10,7 @@ from src.user_inputs import gate_functions as gate_func, objective_function as o
 
 
 def main():
-    """Main function"""
+    """An example run of classic CGP algorithm with EVENCHECK gate as input."""
     gate_fun = [
         gate_func.bin_and,
         gate_func.bin_nand,

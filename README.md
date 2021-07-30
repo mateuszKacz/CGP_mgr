@@ -84,13 +84,15 @@ make black
 Package is designed to perform Cartesian Genetic Programming algorithm with
 Simulated Annealing and Parallel Tempering techniques as optimization procedures.
 
-## Install `poetry`
+## Environment setup
+
+### Install `poetry`
 
 With your preferred method install `poetry` tool. Please note, that installing `poetry` with other that **recommended**
 method (curl) could cause troubles. Using `pip`, `homebrew` or other similar method could cause `PATH` problems and lead
 to errors while setting-up some packages. See [installation instructions for poetry](https://github.com/python-poetry/poetry#installation).
 
-## Install dependencies
+### Install dependencies
 
 When poetry is installed on your machine you can run:
 ```sh

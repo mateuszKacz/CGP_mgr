@@ -29,7 +29,7 @@ def main():
         MAIN_USER_INPUT_PATH / "input_even_check_gate.txt", delimiter=","
     )
 
-    list_of_num_of_copies = [1, 3, 5, 8, 13, 21]
+    list_of_num_of_copies = [2, 3, 5, 8, 13, 21]
 
     num_sim = 50
     switch_step = 40
@@ -39,7 +39,7 @@ def main():
     all_data = []
 
     for num_of_copies in tqdm(list_of_num_of_copies, desc='Num copies:'):
-        temperatures = [np.linspace(0.01, 150, num_of_copies)]
+        temperatures = np.linspace(0.01, 150, num_of_copies)
 
         data = gen_cgp_data(
             _gate_func=gate_fun,

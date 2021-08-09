@@ -31,7 +31,7 @@ def main():
 
     num_sim = 50
     switch_step = 40
-    steps = [10 ** x for x in range(1, 7)]
+    steps = [10 ** x for x in range(2, 7)]
     annealing_scheme = ["const"]
     pt_scheme = ["gaussian", 1]
     temperatures = np.linspace(0.01, 150, 7)

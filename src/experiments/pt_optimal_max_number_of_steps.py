@@ -31,13 +31,13 @@ def main():
 
     num_sim = 50
     switch_step = 40
-    steps = [10 ** x for x in range(2, 7)]
+    steps = [10 ** x for x in range(2, 5)]
     annealing_scheme = ["const"]
     pt_scheme = ["gaussian", 1]
     temperatures = np.linspace(0.01, 150, 7)
     all_data = []
 
-    for max_steps in tqdm(steps, desc='Num copies:'):
+    for max_steps in tqdm(steps, desc='Number of steps value:'):
         data = gen_cgp_data(
             _gate_func=gate_fun,
             _obj_func=obj_func.obj_func,
@@ -59,7 +59,7 @@ def main():
         MAIN_DATA_GATHER_PATH
         / f"pt_evencheck_numsim{num_sim}_switch_step{switch_step}_steps{steps}"
           f"_ptscheme_{pt_scheme[0]}{pt_scheme[1]}_sa_{annealing_scheme[0]}_"
-          f"optimal_max_steps.csv",
+          f"optimal_max_steps_extension.csv",
     )
 
 

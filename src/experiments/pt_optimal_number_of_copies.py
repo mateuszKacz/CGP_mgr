@@ -38,7 +38,7 @@ def main():
     pt_scheme = ["gaussian", 1]
     all_data = []
 
-    for num_of_copies in tqdm(list_of_num_of_copies, desc='Num copies:'):
+    for num_of_copies in tqdm(list_of_num_of_copies, desc="Num copies:"):
         temperatures = np.linspace(0.01, 150, num_of_copies)
 
         data = gen_cgp_data(

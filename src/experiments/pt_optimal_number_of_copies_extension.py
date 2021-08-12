@@ -29,7 +29,7 @@ def main():
         MAIN_USER_INPUT_PATH / "input_even_check_gate.txt", delimiter=","
     )
 
-    list_of_num_of_copies = [44, 65, 99]
+    list_of_num_of_copies = [99]
 
     num_sim = 50
     switch_step = 40
@@ -38,7 +38,7 @@ def main():
     pt_scheme = ["gaussian", 1]
     all_data = []
 
-    for num_of_copies in tqdm(list_of_num_of_copies, desc='Num copies:'):
+    for num_of_copies in tqdm(list_of_num_of_copies, desc="Num copies:"):
         temperatures = np.linspace(0.01, 150, num_of_copies)
 
         data = gen_cgp_data(
@@ -62,8 +62,8 @@ def main():
         all_data,
         MAIN_DATA_GATHER_PATH
         / f"pt_evencheck_numsim{num_sim}_switch_step{switch_step}_steps{steps}"
-          f"_ptscheme_{pt_scheme[0]}{pt_scheme[1]}_sa_{annealing_scheme[0]}_"
-          f"optimal_num_of_copies_extension.csv",
+        f"_ptscheme_{pt_scheme[0]}{pt_scheme[1]}_sa_{annealing_scheme[0]}_"
+        f"optimal_num_of_copies_extension2.csv",
     )
 
 

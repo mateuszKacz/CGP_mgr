@@ -29,7 +29,7 @@ def main():
         MAIN_USER_INPUT_PATH / "input_even_check_gate.txt", delimiter=","
     )
 
-    list_of_num_of_copies = [99]
+    list_of_num_of_copies = [44, 65, 99]
 
     num_sim = 50
     switch_step = 40

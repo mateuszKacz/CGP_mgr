@@ -28,11 +28,13 @@ def gen_cgp_data(
     _pt_scheme=None,
     _pt_num_parallel_copies=5,
     _show_progress=False,
+    _retry=0,
 ):
     """
     Function takes CGPSA parameters with some additional variables and perform numerous
     simulations of CGPSA algorithm.
 
+    :param _retry: indicate which run retry it is
     :param _pt_num_parallel_copies: number of CGP copies for the PT algorithm
     :type _pt_num_parallel_copies: int
     :param _pt_scheme: if set to None then temperatures are set in place
@@ -155,6 +157,7 @@ def gen_cgp_data(
                     "pt_copies": pt_alg.num_parallel_copies,
                     "pt_scheme": _pt_scheme,
                     "init_temperatures": pt_alg.temperatures,
+                    "retry": _retry,
                 }
             )
     else:

@@ -33,7 +33,7 @@ def main():
     retry = 50
     steps = 5000
     annealing_scheme = ["geom", 0.99]
-    temperature = 25.
+    temperature = 25.0
     all_data = []
 
     for i in tqdm(range(retry), desc="Retry:"):

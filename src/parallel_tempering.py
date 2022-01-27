@@ -264,11 +264,9 @@ class PT:
 
             if random() <= proba:
                 # if criterion is met switch systems
-                (
-                    self.cgp[i].simulation.net.net,
-                    self.cgp[j].simulation.net.net,
-                ) = deepcopy(self.cgp[j].simulation.net.net), deepcopy(
-                    self.cgp[i].simulation.net.net
+                (self.cgp[i].simulation.net.net, self.cgp[j].simulation.net.net,) = (
+                    deepcopy(self.cgp[j].simulation.net.net),
+                    deepcopy(self.cgp[i].simulation.net.net),
                 )
                 self.number_of_switches += 1
             else:
